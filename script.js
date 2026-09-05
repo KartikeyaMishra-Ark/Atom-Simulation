@@ -4,40 +4,48 @@ const elementName = document.getElementById("element-name");
 const elementSymbol = document.getElementById("element-symbol");
 const atomicNumber = document.getElementById("atomic-number")
 const massNumber = document.getElementById("mass-number");
-const charge = document.getElementById("charge")
+const charge = document.getElementById("charge");
 const protonRemove = document.getElementById("proton-remove");
 const protonAdd = document.getElementById("proton-add");
 const neutronAdd = document.getElementById("neutron-add");
 const neutronRemove = document.getElementById("neutron-remove");
 const electronAdd = document.getElementById("electron-add");
 const electronRemove = document.getElementById("electron-remove");
-const shellTilts = [0, 0.5, -0.7, 1.0, -1.2, 0.8, -0.4];
 
 
-
-
+const shellTilts = [
+    0.45,
+    0.70,
+    0.95,
+    1.10,
+    0.85,
+    0.60,
+    0.35
+];
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+
 const maxRadius = Math.min(canvas.width, canvas.height) * 0.4;
 
 const centerX = canvas.width / 2;
-
 const centerY = canvas.height / 2;
+
 let shells = [];
 
 let rotation = [];
 
+
+
+
 const atom = {
 
-    protons: 118,
-    neutrons: 6,
+    protons: 10,
+    
+    neutrons: 10,
 
-    electrons: 119
-
-
+    electrons: 6
 };
-
 
 const elements = [
 
@@ -166,7 +174,10 @@ const elements = [
 function updateParticleCounts() {
 
     document.getElementById("proton-count").textContent = atom.protons;
+
+
     document.getElementById("neutron-count").textContent = atom.neutrons;
+
     document.getElementById("electron-count").textContent = atom.electrons;
 
 }
@@ -177,55 +188,58 @@ protonAdd.addEventListener("click", () => {
 
 
 })
+
+
 protonRemove.addEventListener("click", () =>{
 
     if(atom.protons>1){
+
         atom.protons--
         updateAtom();
 
     }
-
 })
 
 
 neutronAdd.addEventListener("click", () =>{
+
     atom.neutrons++
+
     updateAtom()
 
-
 })
+
 neutronRemove.addEventListener("click", () =>{
+
     if(atom.neutrons>0){
+
         atom.neutrons--
         updateAtom()
 
-
     }
-    
 
 })
-
 electronAdd.addEventListener("click", ()=>{
     atom.electrons++
+
     updateAtom();
-
-
 })
-
 
 electronRemove.addEventListener("click", ()=>{
 
     if(atom.electrons>0){
+
         atom.electrons--
+
         updateAtom()
+
     }
 
 })
-
-
 function updateInfo(){
 
     const element = fetchElement()
+
     elementName.textContent = element.name;
     
     elementSymbol.textContent = element.symbol;
@@ -240,30 +254,28 @@ function updateInfo(){
 function getMassNumber(){
 
     const massNumber = atom.neutrons + atom.protons;
+
     return massNumber;
+
+
 }
 
 function getCharge(){
+
+
     const charge = atom.protons - atom.electrons;
     return charge;
+    
 }
 function fetchElement(){
 
     return elements.find(element => element.atomicNumber === atom.protons);
-
-
 }
-
-
-
-
-
-
-
 
 function calcShells(){
 
     shells = [];
+
     rotation = [];
 
 
@@ -271,7 +283,7 @@ function calcShells(){
 
     const shellCapacity = [2, 8, 18, 32, 32, 18, 8];
 
-    for (let i =0; i< shellCapacity.length; i++){
+    for (let i = 0; i< shellCapacity.length; i++){
 
 
         const electronsInShell = Math.min(
@@ -281,50 +293,97 @@ function calcShells(){
         )
 
         shells.push(electronsInShell);
-        remainingElectrons -= electronsInShell;
 
+        remainingElectrons -= electronsInShell;
         rotation.push(i*0.8)
 
         if(remainingElectrons === 0){
             break;
         }
-
     }
 }
 
 const nucleusRadius = 30;
 
-
-
-
-
-
 const shellGap = 25;
-
 
 let shellSpacing;
 
-function calcGeometry(){
-    shellSpacing = (maxRadius - nucleusRadius - shellGap) / shells.length;
 
+function calcGeometry(){
+
+    shellSpacing = (maxRadius - nucleusRadius - shellGap) / shells.length;
 
 }
 function updateAtom(){
 
-
     calcShells();
+
     calcGeometry();
-
-
+    
     updateInfo();
+
     updateParticleCounts();
 
 }
+
 function drawNucleus(){
 
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, nucleusRadius, 0, Math.PI *2);
-    ctx.fill();
+    const totalParticles = atom.protons + atom.neutrons
+    const particleRadius=3.5;
+
+
+    const nucleusSize = Math.max(
+        18,
+        Math.min(38, 12 + Math.sqrt(totalParticles) * 1.5)
+    );
+
+    for (let i = 0; i < totalParticles; i++) {
+
+        let x;
+        let y;
+
+        if (totalParticles === 1 ){
+
+            x = centerX
+            y = centerY;
+
+
+        }
+        else if (totalParticles<=14){
+
+            const angle = i* (Math.PI*2/totalParticles)
+            const distance = 5+Math.floor(i/7)*5;
+
+            x = centerX+Math.cos(angle)*distance;
+            y=centerY+Math.sin(angle )* distance;
+
+        }
+        else{
+            const angle = i * 2.4;
+
+            const distance =
+                Math.sqrt((i + 0.5) / totalParticles) *
+                (nucleusSize - particleRadius);
+
+            x = centerX + Math.cos(angle) * distance;
+            y = centerY + Math.sin(angle) * distance;
+        }
+
+        ctx.beginPath();
+
+        ctx.arc(
+            x,
+            y,
+            particleRadius,
+            0,
+            Math.PI * 2
+        );
+
+
+        ctx.fill();
+    }
+    
 
 }
 
@@ -334,22 +393,20 @@ function drawShell() {
     for(let i = 0; i<shells.length; i++){
 
         const radius = nucleusRadius + shellGap + shellSpacing * i;
-        
         ctx.save();
         ctx.translate(centerX, centerY);
 
         ctx.scale(1, Math.cos(shellTilts[i]));
+
         ctx.beginPath();
-
-
         ctx.arc(0, 0, radius, 0, Math.PI * 2);
         ctx.stroke();
 
         ctx.restore();
+
         ctx.stroke();
 
     }
-
 
 }
 function drawElectron(){
@@ -362,27 +419,32 @@ function drawElectron(){
 
         const radius = nucleusRadius + shellGap + shellSpacing * i;
         for (let j = 0; j < electronCount; j++){
-
-
-            
+ 
             const angle = j * angleStep + rotation[i];
 
             const x = radius * Math.cos(angle);
             const y = radius * Math.sin(angle);
+            const tilt = shellTilts[i];
 
             const electronX = centerX + x
-            const electronY = centerY + y * Math.cos(shellTilts[i])
 
-            ctx.beginPath();
+            const electronY = centerY + y * Math.cos(tilt)
+
+            ctx.beginPath()
+
+            const depth = Math.sin(angle);
 
 
-
-            ctx.arc(electronX, electronY, 8, 0, Math.PI * 2);
+            const electronSize = 6 + depth * 2;
+            
+            ctx.arc(electronX, electronY, electronSize, 0, Math.PI * 2);            
             ctx.fill();
 
         }
     }
+
 }
+
 function electronMovement(){
 
     
@@ -391,26 +453,19 @@ function electronMovement(){
         rotation[i] += 0.01+ i * 0.003;
 
     }
-     
+
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height )
 
     drawNucleus();
 
-
     drawElectron();
-
     drawShell();
+
     requestAnimationFrame(electronMovement);
-
 }     
-
-
 electronMovement();
 
 updateAtom()
-
-
-
 console.log(getMassNumber())
-
 console.log(getCharge())
