@@ -162,7 +162,7 @@ function updateInfo(){
     
     elementSymbol.textContent = element.symbol;
     atomicNumber.textContent = element.atomicNumber;
-    massNumber.textContent = getMassNumber();
+    massNumber.textContent = element.atomicMass;
     charge.textContent = getCharge()
 
 }
