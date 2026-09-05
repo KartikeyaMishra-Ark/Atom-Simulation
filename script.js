@@ -5,6 +5,16 @@ const elementSymbol = document.getElementById("element-symbol");
 const atomicNumber = document.getElementById("atomic-number")
 const massNumber = document.getElementById("mass-number");
 const charge = document.getElementById("charge")
+const protonRemove = document.getElementById("proton-remove");
+const protonAdd = document.getElementById("proton-add");
+const neutronAdd = document.getElementById("neutron-add");
+const neutronRemove = document.getElementById("neutron-remove");
+const electronAdd = document.getElementById("electron-add");
+const electronRemove = document.getElementById("electron-remove");
+const shellTilts = [0, 0.5, -0.7, 1.0, -1.2, 0.8, -0.4];
+
+
+
 
 
 canvas.width = window.innerWidth;
@@ -16,7 +26,7 @@ const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 let shells = [];
 
-let rotation = 0;
+let rotation = [];
 
 const atom = {
 
@@ -151,8 +161,66 @@ const elements = [
     { atomicNumber: 117, symbol: "Ts", name: "Tennessine", atomicMass: 294, period: 7, group: 17, category: "halogen" },
     { atomicNumber: 118, symbol: "Og", name: "Oganesson", atomicMass: 294, period: 7, group: 18, category: "noble gas" }
 
-
 ]
+
+function updateParticleCounts() {
+
+    document.getElementById("proton-count").textContent = atom.protons;
+    document.getElementById("neutron-count").textContent = atom.neutrons;
+    document.getElementById("electron-count").textContent = atom.electrons;
+
+}
+protonAdd.addEventListener("click", () => {
+
+    atom.protons++;
+    updateAtom();
+
+
+})
+protonRemove.addEventListener("click", () =>{
+
+    if(atom.protons>1){
+        atom.protons--
+        updateAtom();
+
+    }
+
+})
+
+
+neutronAdd.addEventListener("click", () =>{
+    atom.neutrons++
+    updateAtom()
+
+
+})
+neutronRemove.addEventListener("click", () =>{
+    if(atom.neutrons>0){
+        atom.neutrons--
+        updateAtom()
+
+
+    }
+    
+
+})
+
+electronAdd.addEventListener("click", ()=>{
+    atom.electrons++
+    updateAtom();
+
+
+})
+
+
+electronRemove.addEventListener("click", ()=>{
+
+    if(atom.electrons>0){
+        atom.electrons--
+        updateAtom()
+    }
+
+})
 
 
 function updateInfo(){
@@ -161,6 +229,7 @@ function updateInfo(){
     elementName.textContent = element.name;
     
     elementSymbol.textContent = element.symbol;
+
     atomicNumber.textContent = element.atomicNumber;
     massNumber.textContent = element.atomicMass;
     charge.textContent = getCharge()
@@ -187,16 +256,23 @@ function fetchElement(){
 
 
 
+
+
+
+
+
 function calcShells(){
 
     shells = [];
+    rotation = [];
+
 
     let remainingElectrons = atom.electrons;
 
     const shellCapacity = [2, 8, 18, 32, 32, 18, 8];
 
-
     for (let i =0; i< shellCapacity.length; i++){
+
 
         const electronsInShell = Math.min(
             remainingElectrons,
@@ -207,16 +283,21 @@ function calcShells(){
         shells.push(electronsInShell);
         remainingElectrons -= electronsInShell;
 
+        rotation.push(i*0.8)
+
         if(remainingElectrons === 0){
             break;
         }
 
     }
-
-
 }
 
 const nucleusRadius = 30;
+
+
+
+
+
 
 const shellGap = 25;
 
@@ -228,28 +309,24 @@ function calcGeometry(){
 
 
 }
-
 function updateAtom(){
-    
+
+
     calcShells();
     calcGeometry();
-    updateInfo();
 
+
+    updateInfo();
+    updateParticleCounts();
 
 }
-
-
 function drawNucleus(){
 
     ctx.beginPath();
-
     ctx.arc(centerX, centerY, nucleusRadius, 0, Math.PI *2);
-
     ctx.fill();
 
 }
-
-
 
 function drawShell() {
 
@@ -257,18 +334,24 @@ function drawShell() {
     for(let i = 0; i<shells.length; i++){
 
         const radius = nucleusRadius + shellGap + shellSpacing * i;
+        
+        ctx.save();
+        ctx.translate(centerX, centerY);
+
+        ctx.scale(1, Math.cos(shellTilts[i]));
         ctx.beginPath();
 
 
-        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.restore();
         ctx.stroke();
 
     }
 
 
-
 }
-
 function drawElectron(){
 
     for (let i = 0; i < shells.length; i++ ){
@@ -282,11 +365,14 @@ function drawElectron(){
 
 
             
-            const angle = j * angleStep + rotation;
+            const angle = j * angleStep + rotation[i];
 
-            const electronX = centerX + radius*Math.cos(angle);
+            const x = radius * Math.cos(angle);
+            const y = radius * Math.sin(angle);
 
-            const electronY= centerY + radius *Math.sin(angle);
+            const electronX = centerX + x
+            const electronY = centerY + y * Math.cos(shellTilts[i])
+
             ctx.beginPath();
 
 
@@ -296,13 +382,15 @@ function drawElectron(){
 
         }
     }
-
 }
-
 function electronMovement(){
 
     
-    rotation = rotation + 0.02;
+    for (let i = 0; i<rotation.length; i++){
+
+        rotation[i] += 0.01+ i * 0.003;
+
+    }
      
     ctx.clearRect(0, 0, canvas.width, canvas.height )
 
@@ -318,6 +406,7 @@ function electronMovement(){
 
 
 electronMovement();
+
 updateAtom()
 
 
@@ -325,7 +414,3 @@ updateAtom()
 console.log(getMassNumber())
 
 console.log(getCharge())
-
-
-
-
