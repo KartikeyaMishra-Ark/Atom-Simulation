@@ -1,67 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 
 
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atom Simulator</title>
+
+
     <link rel="stylesheet" href="style.css">
 
 </head>
 
 <body>
 
+    <div id="app">
+
+    <div id="main-panel">
+
+        <div id="info-panel">
+
+            <h1 id="element-name">Carbon-12</h1>
+
+            <div id="element-symbol">C</div>
+
+            <p>Atomic Number: <span id="atomic-number">6</span></p>
+            <p>Mass Number: <span id="mass-number">12</span></p>
 
 
 
 
+            <p>Charge: <span id="charge">0</span></p>
 
-<div id="info-panel">
-    <h1 id="element-name">Carbon</h1>
-    <div id="element-symbol">C</div>
+            <p>
+                Configuration:
+                <span id="electron-configuration"></span>
+            </p>
+
+            <p>
+                Type:
+                <span id="ion-type">Neutral</span>
+            </p>
+
+        </div>
+
+        <canvas id="background"></canvas>
+
+    </div>
 
 
-    <p>Atomic Number: <span id="atomic-number">6</span></p>
-    <p>Atomic Mass: <span id="mass-number">12</span></p>
+    <div id="isotope-panel">
 
-    <p>Charge: <span id="charge">0</span></p>
-    <p>Configuration: <span id="electron-configuration"></span></p>
-    <p>Type: <span id="ion-type">Neutral</span></p>
+        <h2>Isotope</h2>
 
+        <div id="isotope-name">Carbon-12</div>
+
+        <div class="property">
+            <span>Element</span>
+            <span id="isotope-element">Carbon</span>
+        </div>
+
+        <div class="property">
+            <span>Symbol</span>
+            <span id="isotope-symbol">C</span>
+        </div>
+
+        <div class="property">
+            <span>Atomic Number</span>
+            <span id="isotope-atomic-number">6</span>
+        </div>
+
+        <div class="property">
+            <span>Mass Number</span>
+            <span id="isotope-mass-number">12</span>
+        </div>
+
+        <div class="property">
+            <span>Neutrons</span>
+            <span id="isotope-neutrons">6</span>
+        </div>
+
+        <div class="property">
+            <span>Status</span>
+            <span id="isotope-status">Stable</span>
+        </div>
+
+    </div>
 
 </div>
-<canvas id="background">
 
 
-</canvas>
 
 <div id="controls">
 
     <div class="control">
+
         <span>Protons</span>
+
         <button id="proton-remove">-</button>
         <button id="proton-add">+</button>
+
         <span id="proton-count">6</span>
 
     </div>
 
+
     <div class="control">
 
-
         <span>Neutrons</span>
+
         <button id="neutron-remove">-</button>
         <button id="neutron-add">+</button>
+
         <span id="neutron-count">6</span>
 
     </div>
 
 
     <div class="control">
+
         <span>Electrons</span>
+
         <button id="electron-remove">-</button>
         <button id="electron-add">+</button>
+
         <span id="electron-count">6</span>
 
     </div>
@@ -72,10 +137,12 @@
 
 
 
-
-
-
-
 </body>
+
+
+
+
+
 <script src="script.js"></script>
+
 </html>

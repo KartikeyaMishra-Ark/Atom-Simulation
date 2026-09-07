@@ -7,23 +7,36 @@ const massNumber = document.getElementById("mass-number");
 const charge = document.getElementById("charge");
 const protonRemove = document.getElementById("proton-remove");
 const protonAdd = document.getElementById("proton-add");
+
 const neutronAdd = document.getElementById("neutron-add");
 
 const neutronRemove = document.getElementById("neutron-remove");
 const electronAdd = document.getElementById("electron-add");
+
 const electronRemove = document.getElementById("electron-remove");
+
 const electronConfiguration = document.getElementById("electron-configuration");
 const ionType = document.getElementById("ion-type");
+const isotopePanelName = document.getElementById("isotope-name");
+const isotopeElement = document.getElementById("isotope-element");
+const isotopeSymbol = document.getElementById("isotope-symbol");
 
+const isotopeAtomicNumber = document.getElementById("isotope-atomic-number");
+const isotopeMassNumber = document.getElementById("isotope-mass-number");
+const isotopeNeutrons = document.getElementById("isotope-neutrons");
+const isotopeStatus = document.getElementById("isotope-status");
 
 const shellTilts = [
+
     0.60,
     0.90,
     1.20,
     1.45,
     1.20,
     0.90,
+
     0.60
+
 ];
 
 
@@ -39,18 +52,12 @@ let shells = [];
 
 let rotation = [];
 
-
-
-
 const atom = {
 
     protons: 24,
     neutrons: 24,
     electrons: 24
 };
-
-
-
 
 const elements = [
 
@@ -175,11 +182,132 @@ const elements = [
     { atomicNumber: 118, symbol: "Og", name: "Oganesson", atomicMass: 294, period: 7, group: 18, category: "noble gas" }
 
 ]
+
+const commonIons=[
+
+    { symbol: "H", charge: 1 },
+    { symbol: "Li", charge: 1 },
+    { symbol: "Na", charge: 1 },
+    { symbol: "K", charge: 1 },
+    { symbol: "Mg", charge: 2 },
+    { symbol: "Ca", charge: 2 },
+    { symbol: "Al", charge: 3 },
+    { symbol: "F", charge: -1 },
+    { symbol: "Cl", charge: -1 },
+    { symbol: "Br", charge: -1 },
+    { symbol: "I", charge: -1 },
+    { symbol: "O", charge: -2 },
+    { symbol: "S", charge: -2 },
+    { symbol: "N", charge: -3 },
+    { symbol: "P", charge: -3 },
+    { symbol: "Fe", charge: 2 },
+    { symbol: "Fe", charge: 3 },
+    { symbol: "Cu", charge: 1 },
+    { symbol: "Cu", charge: 2 }
+
+
+]
+
+let isotopes = [];
+
+function updateIsotopePanel() {
+
+    const element = fetchElement();
+
+    if (!element) return;
+
+    const mass = getMassNumber();
+
+    const isotope = isotopes.find(
+        isotope =>
+            isotope.atomicNumber === atom.protons &&
+            isotope.massNumber === mass
+    );
+
+    isotopePanelName.textContent =
+        element.symbol + "-" + mass;
+
+    isotopeElement.textContent =
+        element.name;
+
+    isotopeSymbol.textContent =
+        element.symbol;
+
+    isotopeAtomicNumber.textContent =
+        atom.protons;
+
+    isotopeMassNumber.textContent =
+        mass;
+
+    isotopeNeutrons.textContent =
+        atom.neutrons;
+
+    isotopeStatus.textContent =
+        isotope
+            ? (isotope.radioactive ? "Radioactive" : "Stable")
+            : "Invalid";
+}
+
+async function loadIsotopes() {
+
+    const response = await fetch("isotopes.json");
+
+    isotopes = await response.json();
+
+    console.log("Loaded isotopes:", isotopes.length);
+
+    updateAtom();
+
+}
+
+loadIsotopes();
+
+
+function IsotopesStatus(){
+
+    const massNumber=getMassNumber()
+    const isotope = isotopes.find(
+
+
+        isotope=>
+            isotope.atomicNumber=== atom.protons &&
+
+            isotope.massNumber=== massNumber
+
+    )
+    if (isotope){
+        return isotope.radioactive ? "Radioactive" : "Stable";
+
+    }
+
+    return "Invalid";
+
+
+
+}
+
+
+
+
+
+function setIon(symbol, charge){
+
+
+    const element= elements.find(element.find(element=>element.symbol === symbol))
+    if (!element) return;
+
+    atom.protons = element.atomicNumber
+    atom.electrons = atom.protons - charge;
+    updateAtom();
+
+
+}
+
 function updateParticleCounts() {
 
-    document.getElementById("proton-count").textContent = atom.protons;
 
 
+    document.getElementById("proton-count").textContent = atom.protons
     document.getElementById("neutron-count").textContent = atom.neutrons;
 
     document.getElementById("electron-count").textContent = atom.electrons;
@@ -187,8 +315,15 @@ function updateParticleCounts() {
 }
 protonAdd.addEventListener("click", () => {
 
-    atom.protons++;
-    updateAtom();
+
+    if (atom.protons < 118) {
+
+        atom.protons++
+
+        updateAtom()
+    }
+
+
 })
 
 
@@ -204,52 +339,55 @@ protonRemove.addEventListener("click", () =>{
 })
 
 
-neutronAdd.addEventListener("click", () =>{
+neutronAdd.addEventListener("click", () => {
 
-    atom.neutrons++
+    atom.neutrons++;
+    updateAtom();
 
-    updateAtom()
+});
 
-})
+neutronRemove.addEventListener("click", () => {
 
-neutronRemove.addEventListener("click", () =>{
 
-    if(atom.neutrons>0){
+    if (atom.neutrons > 0) {
 
-        atom.neutrons--
-        updateAtom()
+        atom.neutrons--;
+        updateAtom();
 
     }
 
-})
+});
 
 
-electronAdd.addEventListener("click", ()=>{
-    atom.electrons++
+electronAdd.addEventListener("click", () => {
+
+    atom.electrons++;
 
     updateAtom();
-})
 
-electronRemove.addEventListener("click", ()=>{
 
-    if(atom.electrons>0){
+});
 
-        atom.electrons--
 
-        updateAtom()
+electronRemove.addEventListener("click", () => {
 
+
+    if (atom.electrons > 0) {
+
+        atom.electrons--;
+        updateAtom();
     }
 
-})
 
-
+});
 
 function getElectronConfiguration(){
 
     let electrons = atom.electrons;
 
-
     const orbitals = [
+
+
         ["1s", 2],
         ["2s", 2],
         ["2p", 6],
@@ -270,8 +408,6 @@ function getElectronConfiguration(){
         ["6d", 10],
         ["7p", 6]
 
-
-
     ];
 
     let configuration = [];
@@ -279,17 +415,22 @@ function getElectronConfiguration(){
 
 
         if (electrons === 0){
-            break;
 
+            break;
         }
+
         const electronsInOrbital = Math.min(
+
             electrons,
             orbitals[i][1]
         )
+
+
         configuration.push(
 
             orbitals[i][0]+electronsInOrbital
         );
+
 
         electrons -= electronsInOrbital
 
@@ -298,51 +439,45 @@ function getElectronConfiguration(){
 
 };
 
-
-
-
-
 function updateInfo(){
 
-    const element = fetchElement()
+    const element = fetchElement();
+
     if (!element) return;
-    elementName.textContent = element.name;
 
+    elementName.textContent = getDisplayedName();
 
-    
-    elementSymbol.textContent = element.symbol;
+    elementSymbol.textContent = getDisplayedSymbol();
+
     atomicNumber.textContent = element.atomicNumber;
 
     massNumber.textContent = getMassNumber();
-    charge.textContent = getCharge()
+
+    charge.textContent = getCharge();
+
     ionType.textContent = getIonType();
-    elementName.textContent = getDisplayedName();
-    elementSymbol.textContent = getDisplayedSymbol();
 
-    electronConfiguration.textContent = getElectronConfiguration();
+    electronConfiguration.textContent =
+        getElectronConfiguration();
 
+    updateIsotopePanel();
 }
-
-
 function getMassNumber(){
 
     const massNumber = atom.neutrons + atom.protons;
 
     return massNumber;
 
-
 }
-
-
-
-
 function getCharge(){
 
-
     const charge = atom.protons - atom.electrons;
+
     return charge;
     
 }
+
+
 function fetchElement(){
 
 
@@ -351,13 +486,12 @@ function fetchElement(){
 
 function calcShells(){
 
-    shells = [];
+    shells = [];   
     rotation = [];
 
-
     let remainingElectrons = atom.electrons;
-
     const shellCapacity = [2, 8, 18, 32, 32, 18, 8];
+
 
     for (let i = 0; i< shellCapacity.length; i++){
 
@@ -385,34 +519,31 @@ function calcShells(){
 }
 
 const nucleusRadius = 30;
+
 const shellGap = 25;
 
 
-
-
 let shellSpacing;
-
-
 
 
 function calcGeometry(){
     shellSpacing = (maxRadius - nucleusRadius - shellGap) / shells.length;
 
 }
+
+
 function updateAtom(){
 
     calcShells();
 
     calcGeometry();
+
     updateInfo();
 
 
     updateParticleCounts();
 
 }
-
-
-
 
 function drawNucleus(){
 
@@ -423,6 +554,7 @@ function drawNucleus(){
 
     const nucleusSize = Math.max(
         18,
+
         Math.min(38, 12 + Math.sqrt(totalParticles) * 1.5)
     );
 
@@ -431,10 +563,12 @@ function drawNucleus(){
         const isProton = i < atom.protons;
         
         if (isProton) {
-            ctx.fillStyle = "#ff6b6b";
+
+
+            ctx.fillStyle = "#e63946";
         } 
         else {
-            ctx.fillStyle = "#8ecae6";
+            ctx.fillStyle = "#457b9d";
         }
         let x;
         let y;
@@ -450,22 +584,27 @@ function drawNucleus(){
         else if (totalParticles<=14){
 
             const angle = i* (Math.PI*2/totalParticles)
+
             const distance = 5+Math.floor(i/7)*5;
 
             x = centerX+Math.cos(angle)*distance;
-            y=centerY+Math.sin(angle )* distance;
 
+            y=centerY+Math.sin(angle )* distance;
         }
 
+
         else{
+
             const angle = i * 2.4;
 
             const distance =
                 Math.sqrt((i + 0.5) / totalParticles) *
+
                 (nucleusSize - particleRadius);
 
             x = centerX + Math.cos(angle) * distance;
             y = centerY + Math.sin(angle) * distance;
+
         }
 
         ctx.beginPath();
@@ -482,16 +621,16 @@ function drawNucleus(){
             0,
 
             Math.PI * 2
-        );
 
+        );
 
         ctx.fill();
         
+
+
     }
     
 }
-
-
 
 function drawShell() {
 
@@ -500,33 +639,39 @@ function drawShell() {
 
         const radius = nucleusRadius + shellGap + shellSpacing * i;
         ctx.save();
+
+
         ctx.translate(centerX, centerY);
 
         ctx.scale(1, Math.cos(shellTilts[i]));
 
         ctx.beginPath();
+
         ctx.arc(0, 0, radius, 0, Math.PI * 2);
+
         ctx.stroke();
 
         ctx.restore();
 
-       
+
 
     }
-
-
 
 }
 
 
 function getIonType() {
+
     const charge = getCharge();
 
     if (charge > 0) {
+
         return "Cation";
     }
 
     if (charge < 0) {
+
+
         return "Anion";
     }
 
@@ -534,8 +679,9 @@ function getIonType() {
 }
 
 function drawElectron(){
-    ctx.fillStyle = "#ffd166";
 
+
+    ctx.fillStyle = "#f4a261";
     for (let i = 0; i < shells.length; i++ ){
 
         const electronCount = shells[i];
@@ -543,14 +689,15 @@ function drawElectron(){
         const angleStep = (Math.PI * 2) / electronCount;
 
         const radius = nucleusRadius + shellGap + shellSpacing * i;
+
         for (let j = 0; j < electronCount; j++){
 
             const angle = j * angleStep + rotation[i];
 
             const x = radius * Math.cos(angle);
+
+
             const y = radius * Math.sin(angle);
-
-
 
             const tilt = shellTilts[i];
 
@@ -561,8 +708,6 @@ function drawElectron(){
             ctx.beginPath()
 
             const depth = Math.sin(angle);
-
-
             const electronSize = 6 + depth * 2;
             
             ctx.arc(electronX, electronY, electronSize, 0, Math.PI * 2);            
@@ -573,27 +718,30 @@ function drawElectron(){
 
 }
 
+
+
 function electronMovement(){
 
-    
     for (let i = 0; i<rotation.length; i++){
 
         rotation[i] += 0.01+ i * 0.003;
 
     }
-
-    
     ctx.clearRect(0, 0, canvas.width, canvas.height )
 
     drawNucleus();
+
     drawElectron();
+
     drawShell();
 
     requestAnimationFrame(electronMovement);
 }  
 
 
-function getDisplayedName() {
+function getDisplayedName() { 
+    
+    
     const element = fetchElement();
 
     if (!element) return "";
@@ -612,40 +760,43 @@ function getDisplayedName() {
 }
 
 function getDisplayedSymbol() {
+
     const element = fetchElement();
 
     if (!element) return "";
 
     const charge = getCharge();
-
     if (charge === 0) {
 
         return element.symbol;
+
+
     }
+
     if (charge === 1) {
 
+    
+    
         return element.symbol + "+";
     }
 
     if (charge === -1) {
+
         return element.symbol + "-";
     }
 
     if (charge > 1) {
+
         return element.symbol + charge + "+";
     }
     return element.symbol + Math.abs(charge) + "-";
 }
 
 
+
+
+
 electronMovement();
 
 
 
-
-
-updateAtom()
-console.log(getMassNumber())
-
-
-console.log(getCharge())
