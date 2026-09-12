@@ -3,8 +3,6 @@
 
 <head>
 
-
-
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,13 +10,10 @@
 
 
     <link rel="stylesheet" href="style.css">
-
 </head>
-
 <body>
 
     <div id="app">
-
     <div id="main-panel">
 
         <div id="info-panel">
@@ -30,15 +25,7 @@
             <p>Atomic Number: <span id="atomic-number">6</span></p>
             <p>Mass Number: <span id="mass-number">12</span></p>
 
-
-
-
             <p>Charge: <span id="charge">0</span></p>
-
-            <p>
-                Configuration:
-                <span id="electron-configuration"></span>
-            </p>
 
             <p>
                 Type:
@@ -71,22 +58,58 @@
         <div class="property">
             <span>Atomic Number</span>
             <span id="isotope-atomic-number">6</span>
+
         </div>
 
         <div class="property">
+
             <span>Mass Number</span>
             <span id="isotope-mass-number">12</span>
-        </div>
 
+        </div>
         <div class="property">
+
+            <span>Atomic Mass</span>
+
+            <span id="isotope-atomic-mass"></span>
+
+        </div>
+        <div class="property">
+
             <span>Neutrons</span>
             <span id="isotope-neutrons">6</span>
+
         </div>
 
         <div class="property">
+
             <span>Status</span>
             <span id="isotope-status">Stable</span>
+
         </div>
+
+        <div class="property">
+
+            <span>Half-life</span>
+            <span id="isotope-half-life">—</span>
+
+        </div>
+
+        <div class="property">
+
+            <span>Decay Mode</span>
+            <span id="isotope-decay-mode">—</span>
+
+        </div>
+
+        <div class="property">
+
+            <span>Spin / Parity</span>
+
+            <span id="isotope-spin-parity">—</span>
+
+        </div>
+        
 
     </div>
 
@@ -99,11 +122,13 @@
     <div class="control">
 
         <span>Protons</span>
-
+        <button id="proton-remove-10">-10</button>
         <button id="proton-remove">-</button>
+        <input id="proton-count" type="number" min="1" max="118" value="6">        
         <button id="proton-add">+</button>
-
-        <span id="proton-count">6</span>
+        <button id="proton-add-10">+10</button>
+        
+        
 
     </div>
 
@@ -112,10 +137,13 @@
 
         <span>Neutrons</span>
 
+        <button id="neutron-remove-10">-10</button>
         <button id="neutron-remove">-</button>
-        <button id="neutron-add">+</button>
 
-        <span id="neutron-count">6</span>
+        <input id="neutron-count" type="number" min="0" value="6">
+        <button id="neutron-add">+</button>
+        <button id="neutron-add-10">+10</button>
+
 
     </div>
 
@@ -123,14 +151,18 @@
     <div class="control">
 
         <span>Electrons</span>
-
+        <button id="electron-remove-10">-10</button>
         <button id="electron-remove">-</button>
+        <input id="electron-count" type="number" min="0" value="6">
         <button id="electron-add">+</button>
 
-        <span id="electron-count">6</span>
-
+        <button id="electron-add-10">+10</button>
     </div>
 
+</div>
+<div id="periodic-table">
+    <h2>Periodic Table</h2>
+    <div id="element-grid"></div>
 </div>
 
 

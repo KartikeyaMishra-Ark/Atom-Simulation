@@ -1,10 +1,12 @@
 const canvas = document.getElementById("background");
 const ctx = canvas.getContext("2d");
 const elementName = document.getElementById("element-name");
+
 const elementSymbol = document.getElementById("element-symbol");
 const atomicNumber = document.getElementById("atomic-number")
 const massNumber = document.getElementById("mass-number");
-const charge = document.getElementById("charge");
+const charge = document.getElementById("charge")
+
 const protonRemove = document.getElementById("proton-remove");
 const protonAdd = document.getElementById("proton-add");
 
@@ -24,7 +26,25 @@ const isotopeSymbol = document.getElementById("isotope-symbol");
 const isotopeAtomicNumber = document.getElementById("isotope-atomic-number");
 const isotopeMassNumber = document.getElementById("isotope-mass-number");
 const isotopeNeutrons = document.getElementById("isotope-neutrons");
-const isotopeStatus = document.getElementById("isotope-status");
+const isotopeStatus = document.getElementById("isotope-status")
+
+const IsotopeHalfLife = document.getElementById("isotope-half-life")
+
+const IsotopeDecay = document.getElementById("isotope-decay-mode");
+
+const IsotopeSpinParity =document.getElementById("isotope-spin-parity");
+const isotopeAtomicMass = document.getElementById("isotope-atomic-mass");
+
+const protonAdd10=document.getElementById("proton-add-10")
+const protonRemove10 =document.getElementById("proton-remove-10")
+
+const neutronRemove10= document.getElementById("neutron-remove-10");
+const neutronAdd10 = document.getElementById("neutron-add-10")
+
+const electronRemove10 = document.getElementById("electron-remove-10");
+const electronAdd10= document.getElementById("electron-add-10")
+
+
 
 const shellTilts = [
 
@@ -56,6 +76,7 @@ const atom = {
 
     protons: 24,
     neutrons: 24,
+    
     electrons: 24
 };
 
@@ -182,6 +203,61 @@ const elements = [
     { atomicNumber: 118, symbol: "Og", name: "Oganesson", atomicMass: 294, period: 7, group: 18, category: "noble gas" }
 
 ]
+function createPeriodicTable() {
+
+    const elementGrid = document.getElementById("element-grid");
+
+    elementGrid.innerHTML = "";
+
+    for (let i = 0; i < elements.length; i++) {
+
+        const element = elements[i];
+
+        const elementBox = document.createElement("button");
+
+        elementBox.classList.add("element-box");
+
+        elementBox.textContent = element.symbol;
+        elementBox.title = element.name;
+
+        elementBox.addEventListener("click", () => {
+            selectElement(element.atomicNumber);
+        });
+
+        if (element.atomicNumber >= 58 && element.atomicNumber <= 71) {
+
+            elementBox.style.gridColumn = element.atomicNumber - 54;
+            
+            elementBox.style.gridRow = 8;
+
+        } else if (element.atomicNumber >= 90 && element.atomicNumber <= 103) {
+
+            elementBox.style.gridColumn = element.atomicNumber - 86;
+            elementBox.style.gridRow = 9;
+
+        } else if (element.atomicNumber === 57) {
+
+            elementBox.style.gridColumn = 3;
+            elementBox.style.gridRow = 6;
+
+        } else if (element.atomicNumber === 89) {
+
+            elementBox.style.gridColumn = 3;
+            elementBox.style.gridRow = 7;
+
+        } else {
+
+            elementBox.style.gridColumn = element.group;
+            elementBox.style.gridRow = element.period;
+        }
+
+        elementGrid.appendChild(elementBox);
+    }
+}
+
+
+
+
 
 const commonIons=[
 
@@ -214,39 +290,55 @@ function updateIsotopePanel() {
 
     const element = fetchElement();
 
-    if (!element) return;
+    if (!element) {
+        return;
+    }
 
     const mass = getMassNumber();
-
     const isotope = isotopes.find(
+
         isotope =>
             isotope.atomicNumber === atom.protons &&
             isotope.massNumber === mass
-    );
+    )
 
-    isotopePanelName.textContent =
-        element.symbol + "-" + mass;
+    isotopePanelName.textContent = element.symbol + "-" + mass;
+    isotopeElement.textContent = element.name
 
-    isotopeElement.textContent =
-        element.name;
+    isotopeSymbol.textContent = element.symbol;
+    isotopeAtomicNumber.textContent = atom.protons;
 
-    isotopeSymbol.textContent =
-        element.symbol;
 
-    isotopeAtomicNumber.textContent =
-        atom.protons;
+    isotopeMassNumber.textContent = mass;
 
-    isotopeMassNumber.textContent =
-        mass;
+    isotopeNeutrons.textContent =atom.neutrons
 
-    isotopeNeutrons.textContent =
-        atom.neutrons;
+    if (!isotope){
 
-    isotopeStatus.textContent =
-        isotope
-            ? (isotope.radioactive ? "Radioactive" : "Stable")
-            : "Invalid";
+        isotopeStatus.textContent = "Invalid Isotope"
+
+        IsotopeHalfLife.textContent = "-"
+        IsotopeDecay.textContent = "-";
+
+        IsotopeSpinParity.textContent = "-"
+        isotopeAtomicMass.textContent = "—";
+        return;
+
+
+    }
+
+    isotopeStatus.textContent =isotope.radioactive
+            ? "Radioactive"
+            : "Stable";
+
+    IsotopeHalfLife.textContent =isotope.halfLife ?? "—";
+
+    IsotopeDecay.textContent =isotope.decayMode ?? "—";
+
+    IsotopeSpinParity.textContent =isotope.spinParity ?? "—";
+    isotopeAtomicMass.textContent = isotope.atomicMass + " u";
 }
+
 
 async function loadIsotopes() {
 
@@ -263,9 +355,11 @@ async function loadIsotopes() {
 loadIsotopes();
 
 
+
 function IsotopesStatus(){
 
     const massNumber=getMassNumber()
+
     const isotope = isotopes.find(
 
 
@@ -276,6 +370,7 @@ function IsotopesStatus(){
 
     )
     if (isotope){
+
         return isotope.radioactive ? "Radioactive" : "Stable";
 
     }
@@ -285,7 +380,6 @@ function IsotopesStatus(){
 
 
 }
-
 
 
 
@@ -307,12 +401,35 @@ function updateParticleCounts() {
 
 
 
-    document.getElementById("proton-count").textContent = atom.protons
-    document.getElementById("neutron-count").textContent = atom.neutrons;
+    document.getElementById("proton-count").value = atom.protons
+    document.getElementById("neutron-count").value = atom.neutrons;
 
-    document.getElementById("electron-count").textContent = atom.electrons;
+    document.getElementById("electron-count").value= atom.electrons;
 
 }
+
+document.getElementById("proton-count").addEventListener("change", () => {
+
+    atom.protons = Number(document.getElementById("proton-count").value);
+    updateAtom();
+
+});
+
+document.getElementById("neutron-count").addEventListener("change", () => {
+
+    atom.neutrons = Number(document.getElementById("neutron-count").value);
+    updateAtom();
+
+})
+
+document.getElementById("electron-count").addEventListener("change", () => {
+
+    atom.electrons = Number(document.getElementById("electron-count").value);
+    updateAtom();
+})
+
+
+
 protonAdd.addEventListener("click", () => {
 
 
@@ -335,6 +452,7 @@ protonRemove.addEventListener("click", () =>{
 
         updateAtom();
 
+
     }
 })
 
@@ -342,6 +460,7 @@ protonRemove.addEventListener("click", () =>{
 neutronAdd.addEventListener("click", () => {
 
     atom.neutrons++;
+
     updateAtom();
 
 });
@@ -356,7 +475,7 @@ neutronRemove.addEventListener("click", () => {
 
     }
 
-});
+})
 
 
 electronAdd.addEventListener("click", () => {
@@ -375,12 +494,57 @@ electronRemove.addEventListener("click", () => {
     if (atom.electrons > 0) {
 
         atom.electrons--;
+
         updateAtom();
     }
 
 
 });
+protonAdd10.addEventListener("click", () => {
+    if (atom.protons <= 108) {
+        atom.protons += 10;
+        updateAtom();
+    }
 
+});
+
+protonRemove10.addEventListener("click", () => {
+    if (atom.protons >= 11) {
+        atom.protons -= 10;
+        updateAtom();
+    }
+});
+
+neutronAdd10.addEventListener("click", () => {
+
+    atom.neutrons += 10;
+    updateAtom();
+
+});
+
+neutronRemove10.addEventListener("click", () => {
+
+    if (atom.neutrons >= 10) {
+        atom.neutrons -= 10;
+        updateAtom();
+    }
+
+});
+
+electronAdd10.addEventListener("click", () => {
+    atom.electrons += 10;
+    updateAtom();
+});
+
+electronRemove10.addEventListener("click", () => {
+    if (atom.electrons >= 10) {
+        atom.electrons -= 10;
+        updateAtom();
+    }
+})
+
+
+// honorary function cuz blud got removed
 function getElectronConfiguration(){
 
     let electrons = atom.electrons;
@@ -439,6 +603,8 @@ function getElectronConfiguration(){
 
 };
 
+
+
 function updateInfo(){
 
     const element = fetchElement();
@@ -457,8 +623,7 @@ function updateInfo(){
 
     ionType.textContent = getIonType();
 
-    electronConfiguration.textContent =
-        getElectronConfiguration();
+   
 
     updateIsotopePanel();
 }
@@ -480,22 +645,21 @@ function getCharge(){
 
 function fetchElement(){
 
-
     return elements.find(element => element.atomicNumber === atom.protons);
 }
 
 function calcShells(){
 
     shells = [];   
+
     rotation = [];
 
     let remainingElectrons = atom.electrons;
+
     const shellCapacity = [2, 8, 18, 32, 32, 18, 8];
 
 
     for (let i = 0; i< shellCapacity.length; i++){
-
-
         const electronsInShell = Math.min(
             remainingElectrons,
 
@@ -505,6 +669,8 @@ function calcShells(){
         )
 
         shells.push(electronsInShell);
+
+
 
         remainingElectrons -= electronsInShell;
 
@@ -520,13 +686,25 @@ function calcShells(){
 
 const nucleusRadius = 30;
 
+
 const shellGap = 25;
 
 
 let shellSpacing;
 
-
 function calcGeometry(){
+
+
+    if(shells.length===0){
+
+        shellSpacing = 0;
+        return;
+
+    }
+
+
+
+
     shellSpacing = (maxRadius - nucleusRadius - shellGap) / shells.length;
 
 }
@@ -539,8 +717,6 @@ function updateAtom(){
     calcGeometry();
 
     updateInfo();
-
-
     updateParticleCounts();
 
 }
@@ -563,19 +739,21 @@ function drawNucleus(){
         const isProton = i < atom.protons;
         
         if (isProton) {
-
-
             ctx.fillStyle = "#e63946";
         } 
+
         else {
+
             ctx.fillStyle = "#457b9d";
         }
         let x;
+
         let y;
 
         if (totalParticles === 1 ){
 
             x = centerX
+
             y = centerY;
 
 
@@ -589,7 +767,8 @@ function drawNucleus(){
 
             x = centerX+Math.cos(angle)*distance;
 
-            y=centerY+Math.sin(angle )* distance;
+            y=centerY+Math.sin(angle )* distance
+
         }
 
 
@@ -606,18 +785,12 @@ function drawNucleus(){
             y = centerY + Math.sin(angle) * distance;
 
         }
-
         ctx.beginPath();
 
         ctx.arc(
-
             x,
             y,
-
             particleRadius,
-
-
-
             0,
 
             Math.PI * 2
@@ -625,9 +798,6 @@ function drawNucleus(){
         );
 
         ctx.fill();
-        
-
-
     }
     
 }
@@ -670,12 +840,11 @@ function getIonType() {
     }
 
     if (charge < 0) {
-
-
         return "Anion";
     }
 
     return "Neutral";
+
 }
 
 function drawElectron(){
@@ -775,8 +944,6 @@ function getDisplayedSymbol() {
 
     if (charge === 1) {
 
-    
-    
         return element.symbol + "+";
     }
 
@@ -797,6 +964,37 @@ function getDisplayedSymbol() {
 
 
 electronMovement();
+createPeriodicTable();
 
+
+function selectElement(atomicNumber) {
+
+    const element = elements.find(
+
+        element => element.atomicNumber === atomicNumber
+
+    );
+
+    if (!element) return;
+
+    atom.protons = element.atomicNumber;
+    atom.electrons = element.atomicNumber;
+
+    const defaultMassNumber = Math.round(element.atomicMass);
+
+    const isotope = isotopes.find(
+
+        isotope =>
+            isotope.atomicNumber === atomicNumber &&
+            isotope.massNumber === defaultMassNumber
+
+    );
+
+    if (isotope) {
+        atom.neutrons = isotope.neutrons;
+    }
+
+    updateAtom();
+}
 
 

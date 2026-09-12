@@ -1,7 +1,5 @@
 
 *{
-
-
     margin: 0 ;
     padding: 0;
 
@@ -10,10 +8,9 @@
 }
 
 body{
-
     min-height: 100vh;
 
-    background: #eeeeee;
+    background: #2d0909;
 
     font-family: Arial, sans-serif;
 
@@ -23,16 +20,18 @@ body{
     align-items: center;
 
     padding: 30px;
-
-
 }
+
+
 
 #app {
 
     display: flex;
+
     gap: 20px;
 
     width: 1220px;
+
     max-width: 100%;
 
     align-items: stretch;
@@ -44,22 +43,19 @@ body{
     width: 800px;
 
     position: relative;
-    padding-top: 70px;
+
 }
 
 #background {
-
-
     display: block;
 
     width: 800px;
-    height: 600px;
 
+
+    height: 600px;
     border: 2px solid black;
 
     background: #ffffff;
-
-
 }
 
 
@@ -69,7 +65,6 @@ body{
     position: absolute;
 
     top: 20px;
-
     left: 20px;
 
     z-index: 2;
@@ -78,21 +73,18 @@ body{
 
     padding: 15px 20px;
     border-radius: 10px;
+
     min-width: 220px;
-
-
 }
-
 #element-name {
 
-
     font-size: 28px;
+
     margin-bottom: 5px;
 
 }
 
 #element-symbol {
-
 
     font-size: 42px;
 
@@ -104,37 +96,43 @@ body{
 
 
 #element-name {
-    font-size: 28px;
-    margin-bottom: 5px;
-}
 
+    font-size: 28px;
+    
+    margin-bottom: 5px;
+
+}
 #element-symbol {
 
-    font-size: 42px;
-    font-weight: bold;
 
-    margin-bottom: 10px;
+    font-size: 42px;
+
+    font-weight: bold;
+    margin-bottom: 10px
+
 }
 
 
 #info-panel p {
 
     margin: 5px 0;
+
 }
-
-
-
 
 #isotope-panel h2 {
 
     font-size: 28px;
+
     margin-bottom: 15px;
+
 }
+
+
+
 
 #isotope-panel {
 
     width: 360px;
-
     background: white;
 
     border: 2px solid black;
@@ -142,16 +140,13 @@ body{
     border-radius: 12px;
 
     padding: 25px;
-
     height: fit-content;
-
 }
 
-
-
-
 #isotope-name {
+
     font-size: 32px;
+
     font-weight: bold;
 
     margin-bottom: 25px;
@@ -160,16 +155,13 @@ body{
 
     padding-bottom: 15px;
 }
-
-
-
 .property {
+
     display: flex;
 
     justify-content: space-between;
 
     align-items: center;
-
     padding: 12px 0;
 
     border-bottom: 1px solid #dddddd;
@@ -180,6 +172,7 @@ body{
 .property span:first-child {
 
     font-weight: bold;
+
 }
 
 .property span:last-child {
@@ -189,17 +182,24 @@ body{
 }
 
 #controls {
+
     width: 1180px;
+
     max-width: 100%;
 
     margin-top: 20px;
 
     display: flex;
+
     justify-content: center;
+
     gap: 40px;
+
 }
 
 .control {
+
+
     background: white;
 
     border: 2px solid black;
@@ -210,16 +210,22 @@ body{
     display: flex;
     align-items: center;
     gap: 10px;
+
 }
 
 .control button {
 
     width: 30px;
-
     height: 30px;
 
+    align-self: start;
+
+
     border: 1px solid black;
+
     border-radius: 5px;
+
+
 
     background: #eeeeee;
 
@@ -231,14 +237,97 @@ body{
 
 .control button:hover {
 
-
     background: #dddddd;
 
 }
 
+
+#periodic-table h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+
+
 .control > span:last-child {
 
     min-width: 25px;
+
     text-align: center;
+
     font-weight: bold;
+
+
+}
+
+.element-box {
+
+    width: 100%;
+    height: 100%;
+
+    border: 1px solid #bbb;
+    border-radius: 7px;
+    background: #f5f5f5;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    color: #222;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.element-box:hover {
+
+    background: #dddddd;
+    transform: scale(1.05);
+
+}
+
+#element-grid{
+
+    display:grid;
+    grid-template-columns: repeat(18, 1fr);
+
+    grid-template-rows: repeat(9, 50px);
+    gap: 5px;
+
+
+}
+
+#periodic-table{
+
+    width: 1180px;
+    max-width: 100%;
+
+    margin-top: 25px;
+    padding: 24px;
+
+    background: #ffffff;
+    border: 2px solid #111;
+    border-radius: 16px;
+
+}
+
+
+
+.element-box:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.element-box:active {
+    transform: translateY(0);
 }
