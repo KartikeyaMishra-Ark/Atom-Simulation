@@ -44,7 +44,11 @@ const neutronAdd10 = document.getElementById("neutron-add-10")
 const electronRemove10 = document.getElementById("electron-remove-10");
 const electronAdd10= document.getElementById("electron-add-10")
 
+const periodicTableToggle =
+    document.getElementById("periodic-table-toggle");
 
+const periodicTable =
+    document.getElementById("periodic-table");
 
 const shellTilts = [
 
@@ -203,6 +207,16 @@ const elements = [
     { atomicNumber: 118, symbol: "Og", name: "Oganesson", atomicMass: 294, period: 7, group: 18, category: "noble gas" }
 
 ]
+periodicTableToggle.addEventListener("click", () => {
+
+    if (periodicTable.style.display === "none") {
+        periodicTable.style.display = "block";
+    } else {
+        periodicTable.style.display = "none";
+    }
+
+});
+
 function createPeriodicTable() {
 
     const elementGrid = document.getElementById("element-grid");
@@ -215,7 +229,12 @@ function createPeriodicTable() {
 
         const elementBox = document.createElement("button");
 
+
         elementBox.classList.add("element-box");
+
+        elementBox.classList.add(
+        element.category.toLowerCase().replaceAll(" ", "-")
+        );
 
         elementBox.textContent = element.symbol;
         elementBox.title = element.name;
@@ -227,7 +246,7 @@ function createPeriodicTable() {
         if (element.atomicNumber >= 58 && element.atomicNumber <= 71) {
 
             elementBox.style.gridColumn = element.atomicNumber - 54;
-            
+
             elementBox.style.gridRow = 8;
 
         } else if (element.atomicNumber >= 90 && element.atomicNumber <= 103) {
@@ -736,15 +755,15 @@ function drawNucleus(){
 
     for (let i = 0; i < totalParticles; i++) {
 
-        const isProton = i < atom.protons;
+        const isProton = i % 2 === 0;
         
         if (isProton) {
-            ctx.fillStyle = "#e63946";
-        } 
+                ctx.fillStyle = "rgb(255, 70, 110)";        
+            } 
 
         else {
 
-            ctx.fillStyle = "#457b9d";
+            ctx.fillStyle = "rgb(112, 126, 168)";
         }
         let x;
 
@@ -770,34 +789,26 @@ function drawNucleus(){
             y=centerY+Math.sin(angle )* distance
 
         }
-
-
         else{
 
-            const angle = i * 2.4;
+            const angle = Math.random() * Math.PI * 2;
 
             const distance =
-                Math.sqrt((i + 0.5) / totalParticles) *
-
+                Math.sqrt(Math.random()) *
                 (nucleusSize - particleRadius);
 
             x = centerX + Math.cos(angle) * distance;
             y = centerY + Math.sin(angle) * distance;
 
         }
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = ctx.fillStyle;
+
         ctx.beginPath();
-
-        ctx.arc(
-            x,
-            y,
-            particleRadius,
-            0,
-
-            Math.PI * 2
-
-        );
-
+        ctx.arc(x, y, particleRadius, 0, Math.PI * 2);
         ctx.fill();
+
+        ctx.shadowBlur = 0;
     }
     
 }
@@ -826,7 +837,8 @@ function drawShell() {
 
 
     }
-
+    ctx.strokeStyle = "rgba(150, 170, 255, 0.18)";
+    ctx.lineWidth = 1.2;
 }
 
 
@@ -850,7 +862,9 @@ function getIonType() {
 function drawElectron(){
 
 
-    ctx.fillStyle = "#f4a261";
+    ctx.fillStyle = "rgb(120, 220, 255)";
+    ctx.shadowBlur = 18;
+    ctx.shadowColor = "rgb(120, 220, 255)";
     for (let i = 0; i < shells.length; i++ ){
 
         const electronCount = shells[i];
