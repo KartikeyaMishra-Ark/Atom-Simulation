@@ -13,22 +13,22 @@ const protonAdd = document.getElementById("proton-add");
 const neutronAdd = document.getElementById("neutron-add");
 
 const neutronRemove = document.getElementById("neutron-remove");
-const electronAdd = document.getElementById("electron-add");
+const electronAdd = document.getElementById("electron-add"); 
 
 const electronRemove = document.getElementById("electron-remove");
 
 const electronConfiguration = document.getElementById("electron-configuration");
 const ionType = document.getElementById("ion-type");
 const isotopePanelName = document.getElementById("isotope-name");
-const isotopeElement = document.getElementById("isotope-element");
+const isotopeElement = document.getElementById("isotope-element"); 
 const isotopeSymbol = document.getElementById("isotope-symbol");
 
 const isotopeAtomicNumber = document.getElementById("isotope-atomic-number");
 const isotopeMassNumber = document.getElementById("isotope-mass-number");
 const isotopeNeutrons = document.getElementById("isotope-neutrons");
 const isotopeStatus = document.getElementById("isotope-status")
-
-const IsotopeHalfLife = document.getElementById("isotope-half-life")
+const periodicBackdrop = document.getElementById("periodic-backdrop");
+const IsotopeHalfLife = document.getElementById("isotope-half-life") 
 
 const IsotopeDecay = document.getElementById("isotope-decay-mode");
 
@@ -62,11 +62,20 @@ const shellTilts = [
     0.60
 
 ];
+const shellRotations = [
+    -0.25,
+     0.35,
+    -0.15,
+     0.45,
+    -0.35,
+     0.20,
+    -0.30
+];
 
 let nucleusParticles = [];
 
 const particleRadius = 3.5;
-let nucleusSize;
+let nucleusPositions = [];
 canvas.width = window.innerWidth;
 
 canvas.height = window.innerHeight;
@@ -82,9 +91,11 @@ let rotation = [];
 const atom = {
 
     protons: 24,
+
     neutrons: 24,
     
     electrons: 24
+
 };
 
 
@@ -228,6 +239,7 @@ periodicTableToggle.addEventListener("click", () => {
     } else {
 
         periodicTable.style.display = "block";
+        periodicBackdrop.style.display = "block";
 
         requestAnimationFrame(() => {
             periodicTable.classList.add("open");
@@ -252,7 +264,7 @@ function createPeriodicTable() {
         elementBox.classList.add("element-box");
 
         elementBox.classList.add(
-        element.category.toLowerCase().replaceAll(" ", "-")
+        element.category.toLowerCase().replaceAll(" ", "-") 
         );
 
         elementBox.textContent = element.symbol;
@@ -290,6 +302,7 @@ function createPeriodicTable() {
         } else {
 
             elementBox.style.gridColumn = element.group;
+
             elementBox.style.gridRow = element.period;
         }
 
@@ -419,21 +432,17 @@ function IsotopesStatus(){
 
 function setIon(symbol, charge){
 
-    const element= elements.find(element.find(element=>element.symbol === symbol))
+    const element = elements.find(
+    element => element.symbol === symbol
+    );
     if (!element) return;
 
-    atom.protons = element.atomicNumber
+    atom.protons = element.atomicNumber 
 
     atom.electrons = atom.protons - charge;
     updateAtom();
-
-
 }
-
 function updateParticleCounts() {
- 
-
- 
     document.getElementById("proton-count").value = atom.protons
     document.getElementById("neutron-count").value = atom.neutrons;
 
@@ -469,8 +478,8 @@ protonAdd.addEventListener("click", () => {
 
         atom.protons++
 
-        updateAtom()
-    }
+        updateAtom() 
+    } 
 })
 protonRemove.addEventListener("click", () =>{
 
@@ -486,13 +495,13 @@ protonRemove.addEventListener("click", () =>{
 
 neutronAdd.addEventListener("click", () => {
 
-    atom.neutrons++;
-    
+    atom.neutrons++; 
+
     updateAtom();
 
 });
 
-neutronRemove.addEventListener("click", () => {
+neutronRemove.addEventListener("click", () => { 
 
     if (atom.neutrons > 0) {
 
@@ -512,7 +521,6 @@ electronAdd.addEventListener("click", () => {
 
 });
 
-
 electronRemove.addEventListener("click", () => {
 
     if (atom.electrons > 0) {
@@ -522,10 +530,10 @@ electronRemove.addEventListener("click", () => {
         updateAtom();
     }
 
-
 });
 
 protonAdd10.addEventListener("click", () => {
+
     if (atom.protons <= 108) {
         atom.protons += 10;
 
@@ -550,7 +558,7 @@ neutronAdd10.addEventListener("click", () => {
 
     updateAtom();
 
-});
+}); 
 
 neutronRemove10.addEventListener("click", () => {
 
@@ -570,13 +578,17 @@ electronAdd10.addEventListener("click", () => {
     atom.electrons += 10;
     updateAtom();
 
+
+
 });
 electronRemove10.addEventListener("click", () => {
 
     if (atom.electrons >= 10) {
 
         atom.electrons -= 10;
+
         updateAtom();
+
     }
 
 })
@@ -649,6 +661,7 @@ function updateInfo(){
 
     if (!element)return;
 
+
     elementName.textContent = getDisplayedName();
 
     elementSymbol.textContent = getDisplayedSymbol();
@@ -664,6 +677,8 @@ function updateInfo(){
 
     updateIsotopePanel();
 }
+
+
 
 function getMassNumber(){
 
@@ -683,45 +698,43 @@ function fetchElement(){
     return elements.find(element => element.atomicNumber === atom.protons);
 }
 
-function calcShells(){
+function calcShells() {
 
-    shells = [];   
-
-    rotation = [];
+    shells = [];
 
     let remainingElectrons = atom.electrons;
 
     const shellCapacity = [2, 8, 18, 32, 32, 18, 8];
 
+    for (let i = 0; i < shellCapacity.length; i++) {
 
-    for (let i = 0; i< shellCapacity.length; i++){
         const electronsInShell = Math.min(
             remainingElectrons,
-
-
             shellCapacity[i]
+        );
 
-        )
         shells.push(electronsInShell);
 
         remainingElectrons -= electronsInShell;
 
-        rotation.push(i*0.8)
+        if (rotation[i] === undefined) {
+            rotation[i] = i * 0.8;
+        }
 
-        if(remainingElectrons === 0){
-
+        if (remainingElectrons === 0) {
             break;
-
         }
     }
+
+    rotation.length = shells.length;
 }
 
 const nucleusRadius = 30;
 
 const shellGap = 25;
+ 
 
-
-let shellSpacing;
+let shellSpacing; 
 
 function calcGeometry(){
 
@@ -735,57 +748,51 @@ function calcGeometry(){
 
     shellSpacing = (maxRadius - nucleusRadius - shellGap) / shells.length;
 
-
-
 }
 function updateAtom() {
 
-    const currentProtons = nucleusParticles.filter(
+    if (nucleusPositions.length === 0) {
+        createNucleusPositions();
+    }
+
+    let currentProtons = nucleusParticles.filter(
         particle => particle.type === "proton"
     ).length;
 
-    const currentNeutrons = nucleusParticles.filter(
+    let currentNeutrons = nucleusParticles.filter(
         particle => particle.type === "neutron"
     ).length;
 
-    if (atom.protons > currentProtons) {
 
-        for (let i = currentProtons; i < atom.protons; i++) {
-            addNucleusParticle("proton");
-        }
+    while (currentProtons < atom.protons) {
+
+        addNucleusParticle("proton");
+        currentProtons++;
 
     }
 
-    if (atom.protons < currentProtons) {
-        for (let i = currentProtons; i > atom.protons; i--) {
+    while (currentProtons > atom.protons) {
 
-            const index = nucleusParticles.findIndex(
-                particle => particle.type === "proton"
-            );
+        removeNucleusParticle("proton");
+        currentProtons--;
 
-            if (index !== -1) {
-                nucleusParticles.splice(index, 1);
-            }
-        }
     }
 
-    if (atom.neutrons > currentNeutrons) {
-        for (let i = currentNeutrons; i < atom.neutrons; i++) {
-            addNucleusParticle("neutron");
-        }
+
+    while (currentNeutrons < atom.neutrons) {
+
+        addNucleusParticle("neutron");
+        currentNeutrons++;
+
     }
 
-    if (atom.neutrons < currentNeutrons) {
-        for (let i = currentNeutrons; i > atom.neutrons; i--) {
-            const index = nucleusParticles.findIndex(
-                particle => particle.type === "neutron"
-            );
+    while (currentNeutrons > atom.neutrons) {
 
-            if (index !== -1) {
-                nucleusParticles.splice(index, 1);
-            }
-        }
+        removeNucleusParticle("neutron");
+        currentNeutrons--;
+
     }
+
 
     calcShells();
     calcGeometry();
@@ -793,12 +800,61 @@ function updateAtom() {
     updateInfo();
     updateParticleCounts();
 }
+function addNucleusParticle(type) {
 
+    const positionIndex = nucleusPositions.findIndex(
+        position => !position.used
+    );
+
+    if (positionIndex === -1) return;
+
+    const position = nucleusPositions[positionIndex];
+
+    position.used = true;
+
+    nucleusParticles.push({
+
+        x: position.x,
+        y: position.y,
+
+        type: type,
+
+        positionIndex: positionIndex
+    });
+}
+function removeNucleusParticle(type) {
+    let index = -1;
+    let farthestDistance = -1;
+
+    for (let i = 0; i < nucleusParticles.length; i++) {
+
+        const particle = nucleusParticles[i];
+
+        if (particle.type !== type) continue;
+
+        const distance = Math.hypot(
+            particle.x,
+            particle.y
+        );
+
+        if (distance > farthestDistance) {
+
+            farthestDistance = distance;
+            index = i;
+        }
+    }
+    if (index === -1) return;
+
+    const particle = nucleusParticles[index];
+
+    nucleusPositions[particle.positionIndex].used = false;
+
+    nucleusParticles.splice(index, 1);
+}
 function drawNucleus() {
-
     for (const particle of nucleusParticles) {
-
         const x = centerX + particle.x;
+
         const y = centerY + particle.y;
 
         if (particle.type === "proton") {
@@ -806,6 +862,7 @@ function drawNucleus() {
             ctx.fillStyle = "rgb(255, 70, 110)";
         } else {
             ctx.fillStyle = "rgb(100, 135, 200)";
+
         }
 
         ctx.shadowBlur = 12;
@@ -820,37 +877,53 @@ function drawNucleus() {
             0,
             Math.PI * 2
         );
-
         ctx.fill();
-
         ctx.shadowBlur = 0;
     }
 }
 
+
 function drawShell() {
 
+    ctx.strokeStyle = "rgba(150, 170, 255, 0.18)";
+    ctx.lineWidth = 1.2;
 
-    for(let i = 0; i<shells.length; i++){
+    for (let i = 0; i < shells.length; i++) {
 
-        const radius = nucleusRadius + shellGap + shellSpacing * i;
+        const radius =
+            nucleusRadius +
+            shellGap +
+            shellSpacing * i;
+
         ctx.save();
+
         ctx.translate(centerX, centerY);
 
-        ctx.scale(1, Math.cos(shellTilts[i]));
+        ctx.rotate(shellRotations[i]);
+
+        ctx.scale(
+            1,
+            Math.cos(shellTilts[i])
+        );
 
         ctx.beginPath();
 
-        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.arc(
+            0,
+            0,
+            radius,
+            0,
+            Math.PI * 2
+        );
 
         ctx.stroke();
 
         ctx.restore();
     }
-
-
-    ctx.strokeStyle = "rgba(150, 170, 255, 0.18)";
-    ctx.lineWidth = 1.2;
 }
+
+
+
 
 
 function getIonType() {
@@ -869,6 +942,7 @@ function getIonType() {
     return "Neutral";
 
 }
+
 function drawElectron(){
 
 
@@ -892,17 +966,29 @@ function drawElectron(){
             const y = radius * Math.sin(angle);
 
             const tilt = shellTilts[i];
+            const shellRotation = shellRotations[i];
 
-            const electronX = centerX + x
+            const projectedY = y * Math.cos(tilt);
 
-            const electronY = centerY + y * Math.cos(tilt)
+            const rotatedX =
+                x * Math.cos(shellRotation) -
+                projectedY * Math.sin(shellRotation);
+
+            const rotatedY =
+                x * Math.sin(shellRotation) +
+                projectedY * Math.cos(shellRotation);
+
+            const electronX = centerX + rotatedX;
+            const electronY = centerY + rotatedY;
 
             ctx.beginPath()
 
-            const depth = Math.sin(angle);
-            const electronSize = 6 + depth * 2;
+            const depth = Math.sin(angle) * Math.sin(shellTilts[i]);
+
+            const electronSize = 5.5 + depth * 1.8;
             
             ctx.arc(electronX, electronY, electronSize, 0, Math.PI * 2);            
+
             ctx.fill();
 
         }
@@ -910,6 +996,7 @@ function drawElectron(){
 
 }
 function electronMovement(){
+
 
     for (let i = 0; i<rotation.length; i++){
 
@@ -920,13 +1007,13 @@ function electronMovement(){
 
     drawNucleus();
 
-
-
     drawElectron();
 
     drawShell();
     requestAnimationFrame(electronMovement);
 }  
+
+
 
 
 function getDisplayedName() { 
@@ -937,24 +1024,21 @@ function getDisplayedName() {
     if (!element) return "";
 
     const charge = getCharge();
-
     if (charge > 0) {
-
         return element.name + " ion";
     }
-
     if (charge < 0) {
-
         return element.name + " ion";
     }
 
     return element.name;
 }
 
+
+
 document.addEventListener("click", (event) => {
 
     if (
-
         periodicTable.classList.contains("open") &&
 
         !periodicTable.contains(event.target) &&
@@ -966,12 +1050,16 @@ document.addEventListener("click", (event) => {
         setTimeout(() => {
 
             periodicTable.style.display = "none";
+            periodicBackdrop.style.display = "none";
+
         }, 200);
 
     }
 });
 
+
 function getDisplayedSymbol() {
+
 
     const element = fetchElement();
 
@@ -986,6 +1074,7 @@ function getDisplayedSymbol() {
     }
 
     if (charge === 1) {
+
         return element.symbol + "+";
 
     }
@@ -1002,10 +1091,8 @@ function getDisplayedSymbol() {
     }
     return element.symbol + Math.abs(charge) + "-";
 
+
 }
-
-
-
 
 function selectElement(atomicNumber) {
 
@@ -1016,6 +1103,7 @@ function selectElement(atomicNumber) {
     );
 
     if (!element) return;
+
 
     atom.protons = element.atomicNumber;
 
@@ -1039,67 +1127,76 @@ function selectElement(atomicNumber) {
 
     updateAtom();
 
+
+
+
     periodicTable.classList.remove("open");
 
     setTimeout(() => {
         periodicTable.style.display = "none";
+        periodicBackdrop.style.display = "none";
+
     }, 200);
 }
 
 
 
 
-function addNucleusParticle(type) {
+function createNucleusPositions() {
+    nucleusPositions = [];
 
-    const spacing = particleRadius * 1.8;
+    const minDistance = particleRadius * 1.5;
+    const maxRadius = 42;
 
-    const index = nucleusParticles.length;
+    let attempts = 0;
 
-    if (index === 0) {
-        nucleusParticles.push({
-            x: 0,
-            y: 0,
-            type: type
-        });
-        return;
+    while (
+        nucleusPositions.length < 150 &&
+        attempts < 50000
+    ) {
+        attempts++;
+        const angle = Math.random() * Math.PI * 2;
+
+        const distance =
+            Math.sqrt(Math.random()) * maxRadius;
+
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+        let valid = true;
+
+        for (const position of nucleusPositions) {
+
+            const distanceBetween =
+                Math.hypot(
+                    x - position.x,
+                    y - position.y
+                );
+            if (distanceBetween < minDistance) {
+                valid = false;
+                break;
+            }
+        }
+        if (valid) {
+            nucleusPositions.push({
+                x: x,
+                y: y,
+
+                used: false
+            });
+        }
     }
-
-    let ring = 1;
-
-    let previousParticles = 1;
-
-    while (index >= previousParticles + ring * 6) {
-        previousParticles += ring * 6;
-        ring++;
-    }
-
-    const particlesInRing = ring * 6;
-    const positionInRing = index - previousParticles;
-
-    const angle =
-        (positionInRing / particlesInRing) * Math.PI * 2;
-
-    const distance = ring * spacing;
-
-    nucleusParticles.push({
-
-        x: Math.cos(angle) * distance,
-        y: Math.sin(angle) * distance,
-        type: type
-    });
+    nucleusPositions.sort(
+        (a, b) =>
+            Math.hypot(a.x, a.y) -
+            Math.hypot(b.x, b.y)
+    );
 }
 
-for (let i = 0; i < atom.protons; i++) {
+createNucleusPositions();
 
-    addNucleusParticle("proton");
-}
+updateAtom();
 
-for (let i = 0; i < atom.neutrons; i++) {
-    addNucleusParticle("neutron");
-}
 electronMovement();
 
 createPeriodicTable();
-
-updateAtom();
 
