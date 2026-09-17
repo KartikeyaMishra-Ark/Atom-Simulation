@@ -581,9 +581,7 @@ neutronRemove10.addEventListener("click", () => {
         updateAtom();
     }
 
-});
-
-
+})
 
 electronAdd10.addEventListener("click", () => {
 
@@ -765,12 +763,8 @@ function updateAtom() {
 
     prevElectronCount = atom.electrons;
 
-  
-
     if (nucleusPositions.length === 0) {
-
         createNucleusPositions();
-
     }
 
     let currentProtons = nucleusParticles.filter(
@@ -781,88 +775,100 @@ function updateAtom() {
         particle => particle.type === "neutron"
     ).length;
 
-
     while (currentProtons < atom.protons) {
-
         addNucleusParticle("proton");
         currentProtons++;
-
     }
 
     while (currentProtons > atom.protons) {
-
         removeNucleusParticle("proton");
         currentProtons--;
-
     }
 
     while (currentNeutrons < atom.neutrons) {
-
         addNucleusParticle("neutron");
         currentNeutrons++;
-
     }
 
     while (currentNeutrons > atom.neutrons) {
-
         removeNucleusParticle("neutron");
         currentNeutrons--;
-
     }
+
     calcShells();
-
-
-
-
-    if (electronDifference > 0) {
-    const shellIndex = shells.length - 1;
-    createElectronAnimation(shellIndex);
-    }
     calcGeometry();
+
     for (let i = 0; i < shells.length; i++) {
+
         const electronCount = shells[i];
 
         if (!electronAngles[i]) {
             electronAngles[i] = [];
         }
 
-        while (electronAngles[i].length < electronCount) {
-            const angleStep = (Math.PI * 2) / electronCount;
-            electronAngles[i].push(
+        const angleStep = (Math.PI * 2) / electronCount;
 
-            electronAngles[i].length * angleStep
-        );
+        const oldCount = electronAngles[i].length;
+
+        while (electronAngles[i].length < electronCount) {
+
+            const index = electronAngles[i].length;
+
+            electronAngles[i].push(
+                index * angleStep
+            );
         }
 
         electronAngles[i].length = electronCount;
 
         targetElectronAngles[i] = [];
 
-        const angleStep = (Math.PI * 2) / electronCount;
-
         for (let j = 0; j < electronCount; j++) {
+
             targetElectronAngles[i].push(
                 j * angleStep
             );
         }
 
+        if (electronDifference > 0 && i === shells.length - 1) {
 
+            const newElectronCount = Math.min(
+                electronDifference,
+                electronCount - oldCount
+            );
+
+            for (
+                let j = electronCount - newElectronCount;
+                j < electronCount;
+                j++
+            ) {
+
+                createElectronAnimation(
+                    i,
+                    true,
+                    j
+                );
+            }
+        }
     }
+
+    electronAngles.length = shells.length;
+    targetElectronAngles.length = shells.length;
+
     updateInfo();
     updateParticleCounts();
 }
 
-function createElectronAnimation(shellIndex, entering = true) {
+function createElectronAnimation(
+    shellIndex,
+    entering = true,
+    targetIndex
+) {
 
     const electronCount = shells[shellIndex];
-    const angleStep = (Math.PI * 2) / electronCount;
 
-    const existingAnimations = electronAnime.filter(
-        animation => animation.shell === shellIndex
-    ).length;
-
-    const targetIndex =
-        electronCount - 1 - existingAnimations;
+    const angleStep =
+        (Math.PI * 2) / electronCount;
 
     const targetAngle =
         targetIndex * angleStep;
@@ -871,7 +877,7 @@ function createElectronAnimation(shellIndex, entering = true) {
 
         shell: shellIndex,
 
-        angle: rotation[shellIndex],
+        targetIndex: targetIndex,
 
         targetAngle: targetAngle,
 
@@ -880,7 +886,6 @@ function createElectronAnimation(shellIndex, entering = true) {
         entering: entering
 
     });
-
 }
 
 function addNucleusParticle(type) {
@@ -1044,15 +1049,19 @@ function drawElectron(){
         ).length;
 
         const normalElectronCount = electronCount - animatedCount;
-        const angleStep = (Math.PI * 2) / electronCount;
 
         const radius = nucleusRadius + shellGap + shellSpacing * i;
 
         for (let j = 0; j < normalElectronCount; j++){
 
-            const targetAngle = electronAngles[i][j] + rotation[i];
-            const currentAngle=electronAngles[i][j]
-            const angle=currentAngle+(targetAngle-currentAngle)*0.08+rotation[i];
+            const currentAngle = electronAngles[i][j];
+            const targetAngle = targetElectronAngles[i][j];
+
+            electronAngles[i][j] +=
+                (targetAngle - currentAngle) * 0.08;
+
+            const angle =
+                electronAngles[i][j] + rotation[i];
 
             const x = radius * Math.cos(angle);
             const y = radius * Math.sin(angle);
@@ -1080,71 +1089,62 @@ function drawElectron(){
             const electronSize = 5.5 + depth * 1.8;
             
             ctx.arc(electronX, electronY, electronSize, 0, Math.PI * 2);             
-
             ctx.fill(); 
 
         }
-        for (let i = 0; i < electronAngles.length; i++) {
-            for (let j = 0; j < electronAngles[i].length; j++) {
-                const current = electronAngles[i][j];
-                const target = targetElectronAngles[i][j];
-
-                electronAngles[i][j] += (target - current) * 0.08;
-            }
-        }
+        
         for (const animation of electronAnime){
-        const progress = animation.progress;
+            const progress = Math.min(animation.progress, 1);
 
-        const easedProgress = 1 - Math.pow(1 - progress, 3);
-        if (animation.shell !== i) continue;
-        const radius = nucleusRadius+shellGap+shellSpacing*i;
+            const easedProgress =1 - Math.pow(1 - progress, 3);
+
+            if (animation.shell !== i) continue;
+            const radius = nucleusRadius+shellGap+shellSpacing*i;
 
 
-        const angleStep = (Math.PI * 2) / electronCount;
+            const targetAngle =
+            animation.targetAngle + rotation[i];
 
-        const targetAngle =(electronCount - 1) * angleStep + rotation[i];
+            const distance = 1 - easedProgress;
 
-        const angle =targetAngle -(1 - easedProgress) * Math.PI * 0.7;
-            
-            
-       
-        const animatedRadius =  radius + Math.pow(1 - easedProgress, 2) * 150;
-            
+            const angle =targetAngle - distance * Math.PI * 0.65;
 
-        const x= animatedRadius*Math.cos(angle)
-        const y = animatedRadius*Math.sin(angle);
+            const animatedRadius =radius + Math.pow(distance, 2) * 170;
+                
 
-        const tilt = shellTilts[i];
-        const shellRotation =shellRotations[i];
+            const x= animatedRadius*Math.cos(angle)
+            const y = animatedRadius*Math.sin(angle);
 
-        const projectedY = y * Math.cos(tilt);
+            const tilt = shellTilts[i];
+            const shellRotation =shellRotations[i];
 
-        const rotatedX =
-            x * Math.cos(shellRotation) -
-            projectedY * Math.sin(shellRotation);
+            const projectedY = y * Math.cos(tilt);
 
-        const rotatedY =
-            x * Math.sin(shellRotation) +
-            projectedY * Math.cos(shellRotation);
+            const rotatedX =
+                x * Math.cos(shellRotation) -
+                projectedY * Math.sin(shellRotation);
 
-        const electronX = centerX + rotatedX;
-        const electronY = centerY + rotatedY;
+            const rotatedY =
+                x * Math.sin(shellRotation) +
+                projectedY * Math.cos(shellRotation);
 
-        ctx.beginPath();
-        ctx.arc(
-            electronX,
-            electronY,
-            5.5,
-            0,
-            Math.PI * 2
-        );
-        ctx.fill();
-    }
+            const electronX = centerX + rotatedX;
+            const electronY = centerY + rotatedY;
+
+            ctx.beginPath();
+            ctx.arc(
+                electronX,
+                electronY,
+                5.5,
+                0,
+                Math.PI * 2
+            );
+            ctx.fill();
+        }
     
-    
     }
-
 }
+
 function electronMovement(){
 
 
