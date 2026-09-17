@@ -19,6 +19,7 @@ const electronRemove = document.getElementById("electron-remove");
 
 const electronConfiguration = document.getElementById("electron-configuration");
 const ionType = document.getElementById("ion-type");
+
 const isotopePanelName = document.getElementById("isotope-name");
 const isotopeElement = document.getElementById("isotope-element"); 
 const isotopeSymbol = document.getElementById("isotope-symbol");
@@ -27,6 +28,7 @@ const isotopeAtomicNumber = document.getElementById("isotope-atomic-number");
 const isotopeMassNumber = document.getElementById("isotope-mass-number");
 const isotopeNeutrons = document.getElementById("isotope-neutrons");
 const isotopeStatus = document.getElementById("isotope-status")
+
 const periodicBackdrop = document.getElementById("periodic-backdrop");
 const IsotopeHalfLife = document.getElementById("isotope-half-life") 
 
@@ -63,6 +65,7 @@ const shellTilts = [
 
 ];
 const shellRotations = [
+
     -0.25,
      0.35,
     -0.15,
@@ -70,11 +73,24 @@ const shellRotations = [
     -0.35,
      0.20,
     -0.30
+
 ];
+const atom = {
 
+    protons: 24,
+
+    neutrons: 24,
+    
+    electrons: 24
+
+};
 let nucleusParticles = [];
-
+let electronAnime=[]
+let prevElectronCount= atom.electrons;
+let electronAngles = [];
+let targetElectronAngles = [];
 const particleRadius = 3.5;
+
 let nucleusPositions = [];
 canvas.width = window.innerWidth;
 
@@ -88,15 +104,7 @@ let shells = [];
 
 let rotation = [];
 
-const atom = {
 
-    protons: 24,
-
-    neutrons: 24,
-    
-    electrons: 24
-
-};
 
 
 
@@ -441,7 +449,9 @@ function setIon(symbol, charge){
 
     atom.electrons = atom.protons - charge;
     updateAtom();
+
 }
+
 function updateParticleCounts() {
     document.getElementById("proton-count").value = atom.protons
     document.getElementById("neutron-count").value = atom.neutrons;
@@ -481,6 +491,7 @@ protonAdd.addEventListener("click", () => {
         updateAtom() 
     } 
 })
+
 protonRemove.addEventListener("click", () =>{
 
     if(atom.protons>1){
@@ -490,7 +501,8 @@ protonRemove.addEventListener("click", () =>{
         updateAtom();
 
     }
-});
+
+})
 
 
 neutronAdd.addEventListener("click", () => {
@@ -678,8 +690,6 @@ function updateInfo(){
     updateIsotopePanel();
 }
 
-
-
 function getMassNumber(){
 
     const massNumber = atom.neutrons + atom.protons;
@@ -751,8 +761,16 @@ function calcGeometry(){
 }
 function updateAtom() {
 
+    const electronDifference = atom.electrons - prevElectronCount;
+
+    prevElectronCount = atom.electrons;
+
+  
+
     if (nucleusPositions.length === 0) {
+
         createNucleusPositions();
+
     }
 
     let currentProtons = nucleusParticles.filter(
@@ -778,7 +796,6 @@ function updateAtom() {
 
     }
 
-
     while (currentNeutrons < atom.neutrons) {
 
         addNucleusParticle("neutron");
@@ -792,18 +809,86 @@ function updateAtom() {
         currentNeutrons--;
 
     }
-
-
     calcShells();
-    calcGeometry();
 
+
+
+
+    if (electronDifference > 0) {
+    const shellIndex = shells.length - 1;
+    createElectronAnimation(shellIndex);
+    }
+    calcGeometry();
+    for (let i = 0; i < shells.length; i++) {
+        const electronCount = shells[i];
+
+        if (!electronAngles[i]) {
+            electronAngles[i] = [];
+        }
+
+        while (electronAngles[i].length < electronCount) {
+            const angleStep = (Math.PI * 2) / electronCount;
+            electronAngles[i].push(
+
+            electronAngles[i].length * angleStep
+        );
+        }
+
+        electronAngles[i].length = electronCount;
+
+        targetElectronAngles[i] = [];
+
+        const angleStep = (Math.PI * 2) / electronCount;
+
+        for (let j = 0; j < electronCount; j++) {
+            targetElectronAngles[i].push(
+                j * angleStep
+            );
+        }
+
+
+    }
     updateInfo();
     updateParticleCounts();
 }
+
+function createElectronAnimation(shellIndex, entering = true) {
+
+    const electronCount = shells[shellIndex];
+    const angleStep = (Math.PI * 2) / electronCount;
+
+    const existingAnimations = electronAnime.filter(
+        animation => animation.shell === shellIndex
+    ).length;
+
+    const targetIndex =
+        electronCount - 1 - existingAnimations;
+
+    const targetAngle =
+        targetIndex * angleStep;
+
+    electronAnime.push({
+
+        shell: shellIndex,
+
+        angle: rotation[shellIndex],
+
+        targetAngle: targetAngle,
+
+        progress: 0,
+
+        entering: entering
+
+    });
+
+}
+
 function addNucleusParticle(type) {
 
     const positionIndex = nucleusPositions.findIndex(
+
         position => !position.used
+
     );
 
     if (positionIndex === -1) return;
@@ -823,6 +908,7 @@ function addNucleusParticle(type) {
     });
 }
 function removeNucleusParticle(type) {
+
     let index = -1;
     let farthestDistance = -1;
 
@@ -852,7 +938,9 @@ function removeNucleusParticle(type) {
     nucleusParticles.splice(index, 1);
 }
 function drawNucleus() {
+
     for (const particle of nucleusParticles) {
+
         const x = centerX + particle.x;
 
         const y = centerY + particle.y;
@@ -861,8 +949,8 @@ function drawNucleus() {
 
             ctx.fillStyle = "rgb(255, 70, 110)";
         } else {
-            ctx.fillStyle = "rgb(100, 135, 200)";
 
+            ctx.fillStyle = "rgb(100, 135, 200)";
         }
 
         ctx.shadowBlur = 12;
@@ -870,7 +958,6 @@ function drawNucleus() {
 
         ctx.beginPath();
         ctx.arc(
-
             x,
             y,
             particleRadius,
@@ -880,9 +967,9 @@ function drawNucleus() {
         ctx.fill();
         ctx.shadowBlur = 0;
     }
+
+
 }
-
-
 function drawShell() {
 
     ctx.strokeStyle = "rgba(150, 170, 255, 0.18)";
@@ -909,6 +996,7 @@ function drawShell() {
         ctx.beginPath();
 
         ctx.arc(
+
             0,
             0,
             radius,
@@ -921,8 +1009,6 @@ function drawShell() {
         ctx.restore();
     }
 }
-
-
 
 
 
@@ -953,19 +1039,25 @@ function drawElectron(){
     for (let i = 0; i < shells.length; i++ ){
 
         const electronCount = shells[i];
+        const animatedCount = electronAnime.filter(
+            animation => animation.shell === i
+        ).length;
 
+        const normalElectronCount = electronCount - animatedCount;
         const angleStep = (Math.PI * 2) / electronCount;
 
         const radius = nucleusRadius + shellGap + shellSpacing * i;
 
-        for (let j = 0; j < electronCount; j++){
+        for (let j = 0; j < normalElectronCount; j++){
 
-            const angle = j * angleStep + rotation[i];
+            const targetAngle = electronAngles[i][j] + rotation[i];
+            const currentAngle=electronAngles[i][j]
+            const angle=currentAngle+(targetAngle-currentAngle)*0.08+rotation[i];
 
             const x = radius * Math.cos(angle);
             const y = radius * Math.sin(angle);
 
-            const tilt = shellTilts[i];
+            const tilt = shellTilts[i]; 
             const shellRotation = shellRotations[i];
 
             const projectedY = y * Math.cos(tilt);
@@ -982,16 +1074,74 @@ function drawElectron(){
             const electronY = centerY + rotatedY;
 
             ctx.beginPath()
-
+ 
             const depth = Math.sin(angle) * Math.sin(shellTilts[i]);
 
             const electronSize = 5.5 + depth * 1.8;
             
-            ctx.arc(electronX, electronY, electronSize, 0, Math.PI * 2);            
+            ctx.arc(electronX, electronY, electronSize, 0, Math.PI * 2);             
 
-            ctx.fill();
+            ctx.fill(); 
 
         }
+        for (let i = 0; i < electronAngles.length; i++) {
+            for (let j = 0; j < electronAngles[i].length; j++) {
+                const current = electronAngles[i][j];
+                const target = targetElectronAngles[i][j];
+
+                electronAngles[i][j] += (target - current) * 0.08;
+            }
+        }
+        for (const animation of electronAnime){
+        const progress = animation.progress;
+
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        if (animation.shell !== i) continue;
+        const radius = nucleusRadius+shellGap+shellSpacing*i;
+
+
+        const angleStep = (Math.PI * 2) / electronCount;
+
+        const targetAngle =(electronCount - 1) * angleStep + rotation[i];
+
+        const angle =targetAngle -(1 - easedProgress) * Math.PI * 0.7;
+            
+            
+       
+        const animatedRadius =  radius + Math.pow(1 - easedProgress, 2) * 150;
+            
+
+        const x= animatedRadius*Math.cos(angle)
+        const y = animatedRadius*Math.sin(angle);
+
+        const tilt = shellTilts[i];
+        const shellRotation =shellRotations[i];
+
+        const projectedY = y * Math.cos(tilt);
+
+        const rotatedX =
+            x * Math.cos(shellRotation) -
+            projectedY * Math.sin(shellRotation);
+
+        const rotatedY =
+            x * Math.sin(shellRotation) +
+            projectedY * Math.cos(shellRotation);
+
+        const electronX = centerX + rotatedX;
+        const electronY = centerY + rotatedY;
+
+        ctx.beginPath();
+        ctx.arc(
+            electronX,
+            electronY,
+            5.5,
+            0,
+            Math.PI * 2
+        );
+        ctx.fill();
+    }
+    
+    
     }
 
 }
@@ -1003,6 +1153,13 @@ function electronMovement(){
         rotation[i] += 0.01+ i * 0.003;
 
     }
+    for (const animation of electronAnime) {
+    animation.progress += 0.025;
+    }
+
+    electronAnime = electronAnime.filter(
+    animation => animation.progress < 1
+    );
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     drawNucleus();
@@ -1011,8 +1168,8 @@ function electronMovement(){
 
     drawShell();
     requestAnimationFrame(electronMovement);
-}  
 
+}  
 
 
 
@@ -1039,12 +1196,14 @@ function getDisplayedName() {
 document.addEventListener("click", (event) => {
 
     if (
+
         periodicTable.classList.contains("open") &&
 
         !periodicTable.contains(event.target) &&
         event.target !== periodicTableToggle
 
     ) {
+
         periodicTable.classList.remove("open");
 
         setTimeout(() => {
