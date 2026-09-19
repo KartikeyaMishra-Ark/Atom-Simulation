@@ -8,39 +8,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atom Simulator</title>
 
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=EB+Garamond:wght@500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header id="page-heading">
-    <h1>ATOM SIMULATOR</h1>
-    <p>Create any isotope!</p>
-    </header>
+    
     <div id="app">
-        <div id="info-panel">
+        <div id="plate-column">
 
-            <h1 id="element-name">Carbon-12</h1>
+            <div id="main-panel">
+                <canvas id="background"></canvas>
+            </div>
 
-            <div id="element-symbol">C</div>
-
-            <p>Atomic Number: <span id="atomic-number">6</span></p>
-            <p>Mass Number: <span id="mass-number">12</span></p>
-
-            <p>Charge: <span id="charge">0</span></p>
-
-            <p>
-                Type:
-                <span id="ion-type">Neutral</span>
+            <p id="caption">
+                <span id="element-symbol">C</span>
+                <span id="caption-text">
+                    <span id="element-name">Carbon-12</span> — atomic no. <span id="atomic-number">6</span>, mass no. <span id="mass-number">12</span>, charge <span id="charge">0</span> (<span id="ion-type">Neutral</span>)
+                </span>
             </p>
 
         </div>
-    <div id="main-panel">
-
-        
-
-        <canvas id="background"></canvas>
-
-    </div>
+   
 
 
     <div id="isotope-panel">
@@ -165,20 +155,17 @@
 
 </div>
 
-<button id="periodic-table-toggle">Periodic Table</button>
+<button id="periodic-table-toggle">Atlas</button>
 
 <div id="periodic-backdrop"></div>
 <div id="periodic-table">
-    <h2>Periodic Table</h2>
+    <h2>Atlas</h2>
     
     <div id="element-grid"></div>
 </div>
 
 
-<div id="periodic-table">
-    <h2>Periodic Table</h2>
-    <div id="element-grid"></div>
-</div>
+
 
 </body>
 

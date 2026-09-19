@@ -232,6 +232,16 @@ const elements = [
     { atomicNumber: 118, symbol: "Og", name: "Oganesson", atomicMass: 294, period: 7, group: 18, category: "noble gas" }
 
 ]
+periodicBackdrop.addEventListener("click", () => {
+
+    periodicTable.classList.remove("open");
+
+    setTimeout(() => {
+        periodicTable.style.display = "none";
+        periodicBackdrop.style.display = "none";
+    }, 350);
+
+})
 
 
 periodicTableToggle.addEventListener("click", () => {
@@ -242,7 +252,7 @@ periodicTableToggle.addEventListener("click", () => {
 
         setTimeout(() => {
             periodicTable.style.display = "none";
-        }, 200);
+        }, 350);
 
     } else {
 
@@ -943,10 +953,9 @@ function removeNucleusParticle(type) {
     nucleusPositions[particle.positionIndex].used = false;
 
     nucleusParticles.splice(index, 1);
-}function drawShell() {
+}
 
-    ctx.strokeStyle = "rgba(150, 170, 255, 0.18)";
-    ctx.lineWidth = 1.2;
+function drawShell() {
 
     for (let i = 0; i < shells.length; i++) {
 
@@ -966,29 +975,44 @@ function removeNucleusParticle(type) {
             Math.cos(shellTilts[i])
         );
 
+        ctx.strokeStyle = "rgba(46, 36, 24, 0.4)";
+        ctx.lineWidth = 1;
         ctx.beginPath();
 
-        ctx.arc(
-
-            0,
-            0,
-            radius,
-            0,
-            Math.PI * 2
-        );
-
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
         ctx.stroke();
+
+        ctx.strokeStyle = "rgba(176, 141, 87, 0.45)";
+        ctx.lineWidth = 0.6;
+        ctx.beginPath();
+
+        ctx.arc(0, 0, radius - 3, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgba(46, 36, 24, 0.3)";
+        ctx.lineWidth = 0.8;
+        for (let t = 0; t < 12; t++) {
+
+            const a = t * (Math.PI / 6);
+
+            const x1 = Math.cos(a) * (radius - 3);
+            const y1 = Math.sin(a) * (radius - 3);
+            const x2 = Math.cos(a) * (radius + 3);
+            const y2 = Math.sin(a) * (radius + 3);
+
+            ctx.beginPath();
+
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+
+            ctx.stroke();
+        }
 
         ctx.restore();
     }
 }
 function drawElectron(){
 
-
-    ctx.fillStyle = "rgb(120, 220, 255)";
-    ctx.shadowBlur = 18;
-
-    ctx.shadowColor = "rgb(120, 220, 255)";
     for (let i = 0; i < shells.length; i++ ){
 
         const electronCount = shells[i];
@@ -999,6 +1023,8 @@ function drawElectron(){
         const normalElectronCount = electronCount - animatedCount;
 
         const radius = nucleusRadius + shellGap + shellSpacing * i;
+        const tilt = shellTilts[i];
+        const shellRotation = shellRotations[i];
 
         for (let j = 0; j < normalElectronCount; j++){
 
@@ -1011,11 +1037,33 @@ function drawElectron(){
             const angle =
                 electronAngles[i][j] + rotation[i];
 
+            ctx.strokeStyle = "rgba(31, 58, 95, 0.22)";
+            ctx.lineWidth = 1.6;
+            ctx.beginPath();
+
+            for (let t = 0; t <= 8; t++) {
+
+                const trailAngle = angle - (t / 8) * 0.4;
+                const tx = radius * Math.cos(trailAngle);
+                const ty = radius * Math.sin(trailAngle);
+                const tProjY = ty * Math.cos(tilt);
+
+                const trX = tx * Math.cos(shellRotation) - tProjY * Math.sin(shellRotation);
+                const trY = tx * Math.sin(shellRotation) + tProjY * Math.cos(shellRotation);
+
+                const ptX = centerX + trX;
+                const ptY = centerY + trY;
+
+                if (t === 0) {
+                    ctx.moveTo(ptX, ptY);
+                } else {
+                    ctx.lineTo(ptX, ptY);
+                }
+            }
+            ctx.stroke();
+
             const x = radius * Math.cos(angle);
             const y = radius * Math.sin(angle);
-
-            const tilt = shellTilts[i]; 
-            const shellRotation = shellRotations[i];
 
             const projectedY = y * Math.cos(tilt);
 
@@ -1030,41 +1078,38 @@ function drawElectron(){
             const electronX = centerX + rotatedX;
             const electronY = centerY + rotatedY;
 
-            ctx.beginPath()
- 
-            const depth = Math.sin(angle) * Math.sin(shellTilts[i]);
+            const depth = Math.sin(angle) * Math.sin(tilt);
+            const electronSize = 4.2 + depth * 1.2;
 
-            const electronSize = 5.5 + depth * 1.8;
-            
-            ctx.arc(electronX, electronY, electronSize, 0, Math.PI * 2);             
-            ctx.fill(); 
+            ctx.beginPath();
+            ctx.fillStyle = "#1F3A5F";
+            ctx.arc(electronX, electronY, electronSize, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.lineWidth = 0.6;
+            ctx.strokeStyle = "#0F2038";
+            ctx.stroke();
 
         }
-        
+
         for (const animation of electronAnime){
             const progress = Math.min(animation.progress, 1);
 
-            const easedProgress =1 - Math.pow(1 - progress, 3);
+            const easedProgress = 1 - Math.pow(1 - progress, 3);
 
             if (animation.shell !== i) continue;
-            const radius = nucleusRadius+shellGap+shellSpacing*i;
-
 
             const targetAngle =
-            animation.targetAngle + rotation[i];
+                animation.targetAngle + rotation[i];
 
             const distance = 1 - easedProgress;
 
-            const angle =targetAngle - distance * Math.PI * 0.65;
+            const angle = targetAngle - distance * Math.PI * 0.65;
 
-            const animatedRadius =radius + Math.pow(distance, 2) * 170;
-                
+            const animatedRadius = radius + Math.pow(distance, 2) * 170;
 
-            const x= animatedRadius*Math.cos(angle)
-            const y = animatedRadius*Math.sin(angle);
-
-            const tilt = shellTilts[i];
-            const shellRotation =shellRotations[i];
+            const x = animatedRadius * Math.cos(angle);
+            const y = animatedRadius * Math.sin(angle);
 
             const projectedY = y * Math.cos(tilt);
 
@@ -1080,16 +1125,11 @@ function drawElectron(){
             const electronY = centerY + rotatedY;
 
             ctx.beginPath();
-            ctx.arc(
-                electronX,
-                electronY,
-                5.5,
-                0,
-                Math.PI * 2
-            );
+            ctx.fillStyle = "#1F3A5F";
+            ctx.arc(electronX, electronY, 4.2, 0, Math.PI * 2);
             ctx.fill();
         }
-    
+
     }
 }
 function drawNucleus() {
@@ -1100,32 +1140,30 @@ function drawNucleus() {
 
         const y = centerY + particle.y;
 
-        if (particle.type === "proton") {
-
-            ctx.fillStyle = "rgb(255, 70, 110)";
-        } else {
-
-            ctx.fillStyle = "rgb(100, 135, 200)";
-        }
-
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = ctx.fillStyle;
+        const fill = particle.type === "proton" ? "#7A1F2B" : "#5C5240";
+        const outline = particle.type === "proton" ? "#4A1119" : "#3A332A";
 
         ctx.beginPath();
-        ctx.arc(
-            x,
-            y,
-            particleRadius,
-            0,
-            Math.PI * 2
-        );
+        ctx.fillStyle = fill;
+        ctx.arc(x, y, particleRadius, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0;
+
+        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = outline;
+        ctx.stroke();
+
+        ctx.fillStyle = outline;
+        for (let s = 0; s < 3; s++) {
+            const sa = (s / 3) * Math.PI * 2 + 0.5;
+            const sx = x + Math.cos(sa) * particleRadius * 0.55;
+            const sy = y + Math.sin(sa) * particleRadius * 0.55;
+            ctx.beginPath();
+            ctx.arc(sx, sy, 0.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
     }
 
-
 }
-
 
 
 function getIonType() {
@@ -1215,7 +1253,7 @@ document.addEventListener("click", (event) => {
             periodicTable.style.display = "none";
             periodicBackdrop.style.display = "none";
 
-        }, 200);
+        }, 350);
 
     }
 });
@@ -1299,7 +1337,7 @@ function selectElement(atomicNumber) {
         periodicTable.style.display = "none";
         periodicBackdrop.style.display = "none";
 
-    }, 200);
+    }, 350);
 }
 
 
