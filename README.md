@@ -187,7 +187,15 @@ Click this link to try the project:
 - UI State
 
 # AI declaration
-AI has been used to teach me new concepts used in the project as well as guide me towards other sources for knowledge. It has also been used to parse the data for the isotopes from the NUMBASE library.
+AI has been used to teach me new concepts used in the project as well as guide me towards other sources for knowledge. It has also been used to parse the data for the isotopes from the NUBASE library.
+
+# Future Improvements
+- Exit animation for each electron
+- More refined animation for electrons
+- Better nucleus logic
+- Better information on ions
+- Ion panels to select ions
+
 
 # Credits
 ## Documentations referred to:
