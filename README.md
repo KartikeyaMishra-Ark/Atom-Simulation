@@ -133,21 +133,20 @@ Render Next Frame
 ```
 ## UI / UX
 
-The interface follows a scientific instrument-inspired aesthetic.
+The interface follows a celestial atlas aesthetic, styled after antique star charts and engraved science manuscripts.
 
 - Design principles
-- Deep black background
-- Graphite surfaces
-- Glass-style panels
-- Subtle borders
-- Muted category colours
-- Off-white typography
-- Controlled particle glow
+- Warm parchment background
+- Sepia ink typography
+- Hairline borders, no shadows or blur
+- Category ticks in muted ink tones
+- Gold accent used sparingly
+- Engraved-style shading over glow
 - Clear visual feedback
 
 The atom is kept as the primary visual focus while information panels and controls remain secondary.
 
-Invalid isotope states are highlighted in red to provide immediate feedback instead of relying solely on text.
+Invalid isotope states are highlighted in a muted amber to provide immediate feedback instead of relying solely on text.
 
 # Built With
 
