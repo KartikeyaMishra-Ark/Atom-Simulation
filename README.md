@@ -9,7 +9,7 @@
 
 <a href="https://kartikeyamishra-ark.github.io/Atom-Simulation/">Test the project!</a>
 
-<p><img width="1470" height="838" alt="Screenshot 2026-09-19 at 5 10 06 PM" src="https://github.com/user-attachments/assets/80ea42b9-bb06-4ce7-8766-90b5629b7847" /></p>
+<img width="1470" height="838" alt="Screenshot 2026-09-19 at 10 39 47 PM" src="https://github.com/user-attachments/assets/698a5112-5a98-45b5-8623-ac0a2dcdae04" />
 
 </div>
 
@@ -33,7 +33,7 @@ The project combines a dynamic Canvas simulation with an interactive scientific 
 - Dynamic shell addition according to Bohr configuration
 - Optimised animation for electron addition
 
-<img width="907" height="72" alt="Screenshot 2026-09-19 at 5 28 30 PM" src="https://github.com/user-attachments/assets/3af6f5e8-cb13-40f3-a363-50e88a8e5ba4" />
+<img width="1087" height="81" alt="Screenshot 2026-09-19 at 10 41 55 PM" src="https://github.com/user-attachments/assets/a67705d5-d912-4bf3-864b-6c9c51c3c2d4" />
 
 ## Element Identification
 The panel on the top left provides all the information about the created atom. The information includes:
@@ -42,7 +42,8 @@ The panel on the top left provides all the information about the created atom. T
 - Atomic Number
 - Mass Number
 - Type
-<img width="212" height="200" alt="Screenshot 2026-09-19 at 5 28 59 PM" src="https://github.com/user-attachments/assets/ba5bc043-53ce-47ba-bf0a-720f4f23dc4b" />
+
+<img width="439" height="57" alt="Screenshot 2026-09-19 at 10 40 29 PM" src="https://github.com/user-attachments/assets/2a720e49-8206-47f5-81db-86b1336559af" />
 
 ## Isotope Panel
 All the important information about every ground-state isotope ever discovered has been added which includes:
@@ -53,14 +54,17 @@ All the important information about every ground-state isotope ever discovered h
 - Decay Mode
 - Spin/Parity
 - Invalid isotopes are detected and visually highlighted
-<img width="219" height="493" alt="Screenshot 2026-09-19 at 5 29 47 PM" src="https://github.com/user-attachments/assets/60b5acb2-5843-4e6f-ba55-4e0cf24f0778" />
+- 
+<img width="245" height="615" alt="Screenshot 2026-09-19 at 10 42 22 PM" src="https://github.com/user-attachments/assets/30580114-e325-4fc2-8ec0-65aad16e7bff" />
+
 
 ## Periodic Table
 The entire periodic table has been added which can be accessed by clicking the periodic table button. 
 
 The user can choose any element as they please to immediately build that element!
 
-<img width="1183" height="552" alt="Screenshot 2026-09-19 at 5 31 50 PM" src="https://github.com/user-attachments/assets/eae7ae00-630a-4826-a25d-8f7140c88004" />
+<img width="763" height="552" alt="Screenshot 2026-09-19 at 10 42 59 PM" src="https://github.com/user-attachments/assets/98bad466-2c17-49b8-875e-a67a85fed230" />
+
 
 ## Animated Visuals
 - Animated electrons
