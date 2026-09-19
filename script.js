@@ -95,7 +95,7 @@ let nucleusPositions = [];
 canvas.width = window.innerWidth;
 
 canvas.height = window.innerHeight;
-const maxRadius = Math.min(canvas.width, canvas.height) * 0.4;
+const maxRadius = Math.min(canvas.width, canvas.height) * 0.46;
 const centerX = canvas.width / 2;
 
 const centerY = canvas.height / 2;
@@ -374,9 +374,11 @@ function updateIsotopePanel() {
     isotopeMassNumber.textContent = mass;
 
     isotopeNeutrons.textContent =atom.neutrons
+    isotopePanelName.classList.remove("invalid");
 
     if (!isotope){
-
+        isotopePanelName.classList.add("invalid");
+       
         isotopeStatus.textContent = "Invalid Isotope"
 
         IsotopeHalfLife.textContent = "-"
@@ -526,10 +528,13 @@ neutronRemove.addEventListener("click", () => {
 
 electronAdd.addEventListener("click", () => {
 
-    atom.electrons++;
+    if (atom.electrons < 118){
 
-    updateAtom();
+        atom.electrons++;
 
+        updateAtom();
+    }
+    
 
 });
 
@@ -546,11 +551,8 @@ electronRemove.addEventListener("click", () => {
 
 protonAdd10.addEventListener("click", () => {
 
-    if (atom.protons <= 108) {
-        atom.protons += 10;
-
-        updateAtom();
-    }
+    atom.protons = Math.min(atom.protons + 10, 118);
+    updateAtom();
 
 });
 
@@ -585,7 +587,7 @@ neutronRemove10.addEventListener("click", () => {
 
 electronAdd10.addEventListener("click", () => {
 
-    atom.electrons += 10;
+    atom.electrons = Math.min(atom.electrons + 10, 118);
     updateAtom();
 
 
@@ -737,9 +739,9 @@ function calcShells() {
     rotation.length = shells.length;
 }
 
-const nucleusRadius = 30;
+const nucleusRadius = 36;
 
-const shellGap = 25;
+const shellGap = 28;
  
 
 let shellSpacing; 
@@ -941,41 +943,7 @@ function removeNucleusParticle(type) {
     nucleusPositions[particle.positionIndex].used = false;
 
     nucleusParticles.splice(index, 1);
-}
-function drawNucleus() {
-
-    for (const particle of nucleusParticles) {
-
-        const x = centerX + particle.x;
-
-        const y = centerY + particle.y;
-
-        if (particle.type === "proton") {
-
-            ctx.fillStyle = "rgb(255, 70, 110)";
-        } else {
-
-            ctx.fillStyle = "rgb(100, 135, 200)";
-        }
-
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = ctx.fillStyle;
-
-        ctx.beginPath();
-        ctx.arc(
-            x,
-            y,
-            particleRadius,
-            0,
-            Math.PI * 2
-        );
-        ctx.fill();
-        ctx.shadowBlur = 0;
-    }
-
-
-}
-function drawShell() {
+}function drawShell() {
 
     ctx.strokeStyle = "rgba(150, 170, 255, 0.18)";
     ctx.lineWidth = 1.2;
@@ -1014,26 +982,6 @@ function drawShell() {
         ctx.restore();
     }
 }
-
-
-
-function getIonType() {
-
-    const charge = getCharge();
-
-    if (charge > 0) {
-
-        return "Cation";
-    }
-
-    if (charge < 0) {
-        return "Anion";
-    }
-
-    return "Neutral";
-
-}
-
 function drawElectron(){
 
 
@@ -1144,6 +1092,60 @@ function drawElectron(){
     
     }
 }
+function drawNucleus() {
+
+    for (const particle of nucleusParticles) {
+
+        const x = centerX + particle.x;
+
+        const y = centerY + particle.y;
+
+        if (particle.type === "proton") {
+
+            ctx.fillStyle = "rgb(255, 70, 110)";
+        } else {
+
+            ctx.fillStyle = "rgb(100, 135, 200)";
+        }
+
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = ctx.fillStyle;
+
+        ctx.beginPath();
+        ctx.arc(
+            x,
+            y,
+            particleRadius,
+            0,
+            Math.PI * 2
+        );
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+
+
+}
+
+
+
+function getIonType() {
+
+    const charge = getCharge();
+
+    if (charge > 0) {
+
+        return "Cation";
+    }
+
+    if (charge < 0) {
+        return "Anion";
+    }
+
+    return "Neutral";
+
+}
+
+
 
 function electronMovement(){
 
@@ -1161,15 +1163,17 @@ function electronMovement(){
     animation => animation.progress < 1
     );
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-
+    drawElectron();
     drawNucleus();
 
-    drawElectron();
+    
 
     drawShell();
     requestAnimationFrame(electronMovement);
 
 }  
+
+
 
 
 

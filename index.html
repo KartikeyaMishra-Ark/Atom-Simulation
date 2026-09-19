@@ -12,10 +12,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
+    <header id="page-heading">
+    <h1>ATOM SIMULATOR</h1>
+    <p>Create any isotope!</p>
+    </header>
     <div id="app">
-    <div id="main-panel">
-
         <div id="info-panel">
 
             <h1 id="element-name">Carbon-12</h1>
@@ -33,6 +34,9 @@
             </p>
 
         </div>
+    <div id="main-panel">
+
+        
 
         <canvas id="background"></canvas>
 
@@ -44,7 +48,12 @@
         <h2>Isotope</h2>
 
         <div id="isotope-name">Carbon-12</div>
+        <div class="property">
 
+            <span>Status</span>
+            <span id="isotope-status">Stable</span>
+
+        </div>
         <div class="property">
             <span>Element</span>
             <span id="isotope-element">Carbon</span>
@@ -81,12 +90,7 @@
 
         </div>
 
-        <div class="property">
-
-            <span>Status</span>
-            <span id="isotope-status">Stable</span>
-
-        </div>
+        
 
         <div class="property">
 
