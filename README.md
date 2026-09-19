@@ -200,6 +200,9 @@ AI has been used to teach me new concepts used in the project as well as guide m
 ## The video which introduced me to Canvas
 - https://youtu.be/gm1QtePAYTM?si=L7VWXextQvAn2uVA
 
+## Thanks to NUBASE for providing the data about every existing isotope
+- https://www-nds.iaea.org/amdc/web/nubase_en.html
+
 # Built while learning HTML, CSS and JavaScript
 
 
